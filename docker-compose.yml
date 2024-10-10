@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  db:
+    image: "postgres:15.2"
+    ports:
+      - "6432:5432"
+    environment:
+      - POSTGRES_USER=algorithm
+      - POSTGRES_PASSWORD=academyofalgorithm2021
+      - POSTGRES_DB=algorithm_db
