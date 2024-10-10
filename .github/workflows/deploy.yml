@@ -1,0 +1,83 @@
+name: Deploy ASP.NET Core Web API
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.x'
+
+      - name: restore dependencies
+        run: dotnet restore
+
+      - name: project build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: publishing binaries
+        run: dotnet publish -c Release -o algorithm-server
+
+      # - name: install goose migration tool
+      #   run: |
+      #     curl --output install.sh https://raw.githubusercontent.com/pressly/goose/master/install.sh
+      #     sudo GOOSE_INSTALL=/usr sh install.sh
+      #     which goose
+
+      # - name: applying migrations
+      #   run: |
+      #     #!/bin/bash
+      #     chmod +x ./scripts/run_migrations_server.sh
+      #     ./scripts/run_migrations_server.sh
+      #   env:
+      #     DB_HOST: ${{ secrets.DB_HOST }}
+      #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      #   working-directory: .
+
+      - name: setup ssh before script
+        run: |
+          eval $(ssh-agent -s)
+          echo "${{ secrets.VM_PEM }}" | tr -d '\r' | ssh-add -
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: clean up running binaries from vm
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_PEM }}
+          port: 22
+          script: |
+            sudo pkill dotnet || echo 'Process WebAPI not running'
+            sudo rm -r ~/algorithm-server || echo 'algorithm-folder does not exist'
+            exit
+
+
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_PEM }}
+          port: 22
+          source: ./algorithm-server/*
+          target: ~/
+
+      - name: running copied artifact inside vm
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_PEM }}
+          port: 22
+          script: |
+            nohup sudo dotnet ~/algorithm-server/WebAPI.dll &>/dev/null &
+            exit
