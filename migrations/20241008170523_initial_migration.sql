@@ -6,14 +6,14 @@ create table if not exists student (
     lastname VARCHAR(255) NOT NULL,
     phone VARCHAR(255) NOT NULL UNIQUE,
     grade SMALLINT NOT NULL,
-    school VARCHAR(255) NOT NULL,
-    region VARCHAR(255) NOT NULL,
-    country VARCHAR(255) NOT NULL,
-    score INT NOT NULL,
+    school_id BIGINT NOT NULL,  
+    total_score INT NOT NULL,
     email VARCHAR(255) UNIQUE,
     dob DATE NOT NULL,
     gender VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    FOREIGN KEY (school_id) REFERENCES school(id)
 );
 
 create table if not exists question (
@@ -77,6 +77,15 @@ create table if not exists student_enrollment(
 
     FOREIGN KEY (student_id) REFERENCES student(id)
 );
+
+create table if not exists school (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    region VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL
+);
+
 -- +goose StatementEnd
 
 -- +goose Down
@@ -88,4 +97,5 @@ DROP TABLE IF EXISTS week_question;
 DROP TABLE IF EXISTS student_weekly_activity;
 DROP TABLE IF EXISTS student_question_attempt;
 DROP TABLE IF EXISTS student_enrollment;
+DROP TABLE IF EXISTS school;
 -- +goose StatementEnd
