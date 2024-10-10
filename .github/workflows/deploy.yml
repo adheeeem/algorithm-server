@@ -1,4 +1,4 @@
-name: Deploy ASP.NET Core Web API
+name: Deploy Algorithm Server
 
 on:
   workflow_dispatch:
