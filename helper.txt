@@ -1,0 +1,1 @@
+docker exec -it e7020683eadc psql postgres://algorithm:academyofalgorithm2021@localhost/algorithm_db
