@@ -17,17 +17,17 @@ public class WeekRepository(IDbConnection connection) : IWeekRepository
 		return id;
 	}
 
-	public async Task<int> GetWeekId(int unitNumber, int weekNumber)
+	public async Task<int> GetWeekId(int unitNumber, int weekNumber, int grade)
 	{
-		var query = $"select id from {WeekTable} where number=@weekNumber and unit_number=@unitNumber";
-		int id = await connection.QuerySingleAsync<int>(query, new { unitNumber, weekNumber });
+		var query = $"select id from {WeekTable} where number=@weekNumber and unit_number=@unitNumber and grade=@grade";
+		int id = await connection.QuerySingleOrDefaultAsync<int>(query, new { unitNumber, weekNumber, grade });
 		return id;
 	}
 
-	public async Task<bool> CheckIfWeekExists(int unitNumber, int weekNumber)
+	public async Task<bool> CheckIfWeekExists(int unitNumber, int weekNumber, int grade)
 	{
-		var query = $"select 1 from {WeekTable} where number=@weekNumber and unit_number=@unitNumber";
-		int id = await connection.QuerySingleOrDefaultAsync<int>(query, new { unitNumber, weekNumber });
+		var query = $"select 1 from {WeekTable} where number=@weekNumber and unit_number=@unitNumber and grade=@grade";
+		int id = await connection.QuerySingleOrDefaultAsync<int>(query, new { unitNumber, weekNumber, grade });
 		return id == 1;
 	}
 }

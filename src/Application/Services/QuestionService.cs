@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Application.Exceptions;
 using Application.Interfaces;
 using Application.Requests;
 
@@ -8,7 +9,9 @@ public class QuestionService(IQuestionRepository questionRepository, IWeekReposi
 {
 	public async Task<int> AddNewQuestion(CreateQuestionRequest request)
 	{
-		int weekId = await weekRepository.GetWeekId(request.UnitNumber, request.WeekNumber);
+		int weekId = await weekRepository.GetWeekId(request.UnitNumber, request.WeekNumber, request.Grade);
+		if (weekId == 0)
+			throw new RecordNotFoundException("Week with this unit number and grade does not exist");
 		var questionDto = new CreateQuestionDto
 		{
 			QuestionEn = request.QuestionEn,

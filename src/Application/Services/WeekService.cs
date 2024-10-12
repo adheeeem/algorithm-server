@@ -9,7 +9,7 @@ public class WeekService(IWeekRepository weekRepository)
 {
 	public async Task<int> CreateWeek(CreateWeekRequest request)
 	{
-		bool check = await weekRepository.CheckIfWeekExists(request.UnitNumber, request.Number);
+		bool check = await weekRepository.CheckIfWeekExists(request.UnitNumber, request.Number, request.Grade);
 		if (check)
 			throw new RecordAlreadyExistsException("Week with this number and unit number already exists.");
 		var week = new CreateWeekDto

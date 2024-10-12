@@ -10,5 +10,6 @@ public class CreateQuestionRequest
 	public string[] OptionsEn { get; set; } = [];
     public int UnitNumber { get; set; }
     public int WeekNumber { get; set; }
+    public int Grade { get; set; }
     public int AnswerId { get; set; }
 }
