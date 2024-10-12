@@ -79,5 +79,5 @@ jobs:
           key: ${{ secrets.VM_PEM }}
           port: 22
           script: |
-            nohup sudo dotnet ~/algorithm-server/WebAPI.dll &>/dev/null &
+            nohup sudo ~/algorithm-server/WebAPI &>/dev/null &
             exit
