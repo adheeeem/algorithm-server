@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.VM_PEM }}
           port: 22
           script: |
-            sudo pkill dotnet || echo 'Process WebAPI not running'
+            sudo pkill WebAPI || echo 'Process WebAPI not running'
             sudo rm -r ~/algorithm-server || echo 'algorithm-folder does not exist'
             exit
 

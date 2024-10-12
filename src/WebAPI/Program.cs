@@ -1,10 +1,14 @@
 using Infrastructure;
 using Application;
+using WebAPI.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(cfg =>
+{
+	cfg.Filters.Add(typeof(CustomExceptionHandler));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Configuration.AddEnvironmentVariables();

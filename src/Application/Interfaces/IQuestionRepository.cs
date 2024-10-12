@@ -4,5 +4,5 @@ namespace Application.Interfaces;
 
 public interface IQuestionRepository
 {
-	Task<int> AddNewQuestion(AddNewQuestionDto question);
+	Task<int> AddNewQuestion(CreateQuestionDto question);
 }

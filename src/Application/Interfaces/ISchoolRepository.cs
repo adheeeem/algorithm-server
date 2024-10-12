@@ -4,5 +4,5 @@ namespace Application.Interfaces;
 
 public interface ISchoolRepository
 {
-	Task<int> AddNewSchool(AddNewSchoolDto school); 
+	Task<int> AddNewSchool(CreateSchoolDto school); 
 }

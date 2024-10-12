@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> AddNewSchool([FromBody] AddNewQuestionRequest request)
+		public async Task<IActionResult> AddNewSchool([FromBody] CreateQuestionRequest request)
 		{
 			var questionId = await _questionService.AddNewQuestion(request);
 			return Ok(questionId);

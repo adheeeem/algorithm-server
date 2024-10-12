@@ -4,11 +4,12 @@ using Application.Requests;
 
 namespace Application.Services;
 
-public class QuestionService(IQuestionRepository questionRepository)
+public class QuestionService(IQuestionRepository questionRepository, IWeekRepository weekRepository)
 {
-	public async Task<int> AddNewQuestion(AddNewQuestionRequest request)
+	public async Task<int> AddNewQuestion(CreateQuestionRequest request)
 	{
-		var questionDto = new AddNewQuestionDto
+		int weekId = await weekRepository.GetWeekId(request.UnitNumber, request.WeekNumber);
+		var questionDto = new CreateQuestionDto
 		{
 			QuestionEn = request.QuestionEn,
 			QuestionRu = request.QuestionRu,
@@ -17,6 +18,7 @@ public class QuestionService(IQuestionRepository questionRepository)
 			OptionsRu = request.OptionsRu,
 			OptionsTj = request.OptionsTj,
 			AnswerId = request.AnswerId,
+			WeekId = weekId,
 		};
 		int id = await questionRepository.AddNewQuestion(questionDto);
 

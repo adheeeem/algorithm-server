@@ -6,9 +6,9 @@ namespace Application.Services;
 
 public class SchoolService(ISchoolRepository schoolRepository)
 {
-	public async Task<int> AddNewSchool(AddNewSchoolRequest request)
+	public async Task<int> AddNewSchool(CreateSchoolRequest request)
 	{
-		var schoolDto = new AddNewSchoolDto { City = request.City, Country = request.Country, Name = request.Name, Region = request.Region };
+		var schoolDto = new CreateSchoolDto { City = request.City, Country = request.Country, Name = request.Name, Region = request.Region };
 		var id = await schoolRepository.AddNewSchool(schoolDto);
 		return id;
 	}
