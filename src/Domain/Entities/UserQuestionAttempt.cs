@@ -4,7 +4,6 @@ public class UserQuestionAttempt
 {
     public int Id { get; set; }
     public int UserId { get; set; }
-    public int WeekId { get; set; }
     public DateTimeOffset Date { get; set; } = DateTimeOffset.Now;
     public int QuestionId { get; set; }
     public int SelectedOptionId { get; set; }

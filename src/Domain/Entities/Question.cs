@@ -9,4 +9,5 @@ public class Question
     public string[] OptionsRu { get; set; } = [];
     public string[] OptionsEn { get; set; } = [];
     public int AnswerId { get; set; }
+    public int WeekId { get; set; }
 }

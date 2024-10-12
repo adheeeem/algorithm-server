@@ -8,5 +8,6 @@ public static class ApplicationServices
 	public static void AddApplicationServices(this IServiceCollection services)
 	{
 		services.AddScoped<SchoolService>();
+		services.AddScoped<QuestionService>();
 	}
 }

@@ -14,5 +14,6 @@ public static class ConfigureServices
 		services.AddTransient<IDbConnection>(dc => new NpgsqlConnection(configuration["DefaultConnection"]));
 
 		services.AddScoped<ISchoolRepository, SchoolRepository>();
+		services.AddScoped<IQuestionRepository, QuestionRepository>();
 	}
 }

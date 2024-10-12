@@ -9,7 +9,7 @@ public class SchoolService(ISchoolRepository schoolRepository)
 	public async Task<int> AddNewSchool(AddNewSchoolRequest request)
 	{
 		var schoolDto = new AddNewSchoolDto { City = request.City, Country = request.Country, Name = request.Name, Region = request.Region };
-		var res = await schoolRepository.AddNewSchool(schoolDto);
-		return res;
+		var id = await schoolRepository.AddNewSchool(schoolDto);
+		return id;
 	}
 }

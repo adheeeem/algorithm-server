@@ -27,17 +27,6 @@ create table if not exists app_user (
     FOREIGN KEY (school_id) REFERENCES school(id)
 );
 
-create table if not exists question (
-    id BIGSERIAL PRIMARY KEY,
-    question_tj TEXT NOT NULL,
-    question_en TEXT NOT NULL,
-    question_ru TEXT NOT NULL,
-    options_tj TEXT[] NOT NULL,
-    options_en TEXT[] NOT NULL,
-    options_ru TEXT[] NOT NULL,
-    answer_id BIGINT NOT NULL
-);
-
 create table if not exists week (
     id BIGSERIAL PRIMARY KEY,
     number SMALLINT NOT NULL,
@@ -46,13 +35,18 @@ create table if not exists week (
     unit_number SMALLINT NOT NULL
 );
 
-create table if not exists week_question (
+create table if not exists question (
     id BIGSERIAL PRIMARY KEY,
+    question_tj TEXT NOT NULL,
+    question_en TEXT NOT NULL,
+    question_ru TEXT NOT NULL,
+    options_tj TEXT[] NOT NULL,
+    options_en TEXT[] NOT NULL,
+    options_ru TEXT[] NOT NULL,
     week_id BIGINT NOT NULL,
-    question_id BIGINT NOT NULL,
+    answer_id BIGINT NOT NULL,
 
-    FOREIGN KEY (week_id) REFERENCES week(id),
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    FOREIGN KEY (week_id) REFERENCES week(id)
 );
 
 create table if not exists app_user_weekly_activity (
@@ -69,13 +63,12 @@ create table if not exists app_user_weekly_activity (
 create table if not exists app_user_question_attempt(
     id BIGSERIAL PRIMARY KEY,
     app_user_id BIGINT NOT NULL,
-    week_id BIGINT NOT NULL,
     date DATE NOT NULL,
     question_id BIGINT NOT NULL,
     selected_option_id BIGINT NOT NULL,
 
     FOREIGN KEY (app_user_id) REFERENCES app_user(id),
-    FOREIGN KEY (week_id) REFERENCES week(id)
+    FOREIGN KEY (question_id) REFERENCES question(id)
 );
 
 create table if not exists app_user_enrollment(
@@ -96,7 +89,6 @@ create table if not exists app_user_enrollment(
 DROP TABLE IF EXISTS app_user;
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS week;
-DROP TABLE IF EXISTS week_question;
 DROP TABLE IF EXISTS app_user_weekly_activity;
 DROP TABLE IF EXISTS app_user_question_attempt;
 DROP TABLE IF EXISTS app_user_enrollment;
