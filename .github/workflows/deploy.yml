@@ -25,21 +25,21 @@ jobs:
       - name: publishing binaries
         run: dotnet publish -c Release -o algorithm-server
 
-      # - name: install goose migration tool
-      #   run: |
-      #     curl --output install.sh https://raw.githubusercontent.com/pressly/goose/master/install.sh
-      #     sudo GOOSE_INSTALL=/usr sh install.sh
-      #     which goose
+      - name: install goose migration tool
+        run: |
+          curl --output install.sh https://raw.githubusercontent.com/pressly/goose/master/install.sh
+          sudo GOOSE_INSTALL=/usr sh install.sh
+          which goose
 
-      # - name: applying migrations
-      #   run: |
-      #     #!/bin/bash
-      #     chmod +x ./scripts/run_migrations_server.sh
-      #     ./scripts/run_migrations_server.sh
-      #   env:
-      #     DB_HOST: ${{ secrets.DB_HOST }}
-      #     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      #   working-directory: .
+      - name: applying migrations
+        run: |
+          #!/bin/bash
+          chmod +x ./scripts/run_migrations_server.sh
+          ./scripts/run_migrations_server.sh
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        working-directory: .
 
       - name: setup ssh before script
         run: |
