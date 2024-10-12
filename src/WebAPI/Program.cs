@@ -13,9 +13,9 @@ builder.Services.AddCors(options =>
 {
 	options.AddPolicy("CORS_POLICY", policyConfig =>
 	{
-		policyConfig.WithOrigins("http://localhost:5173", "http://192.168.1.4:5173", "http://192.168.1.4", "https://algorithm-client.netlify.app")
-					.AllowAnyHeader()
-					.AllowAnyMethod();
+		policyConfig.WithOrigins("http://localhost:5173", "http://192.168.1.4:5173", "http://192.168.1.4", "https://algorithm-client.netlify.app", "http://109.75.62.246:5173", "http://109.75.62.246", "http://localhost:5173", "http://192.168.1.52:5173", "http://192.168.1.52", "http://192.168.1.52:5173")
+		.AllowAnyHeader()
+		.AllowAnyMethod();
 	});
 });
 
