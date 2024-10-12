@@ -79,5 +79,5 @@ jobs:
           key: ${{ secrets.VM_PEM }}
           port: 22
           script: |
-            nohup sudo ~/algorithm-server/WebAPI &>/dev/null &
+            nohup ~/algorithm-server/WebAPI &>/dev/null &
             exit
