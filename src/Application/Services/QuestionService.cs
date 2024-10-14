@@ -2,6 +2,7 @@
 using Application.Exceptions;
 using Application.Interfaces;
 using Application.Requests;
+using Application.Responses;
 
 namespace Application.Services;
 
@@ -26,5 +27,10 @@ public class QuestionService(IQuestionRepository questionRepository, IWeekReposi
 		int id = await questionRepository.AddNewQuestion(questionDto);
 
 		return id;
+	}
+
+	public async Task<ListedResponse<QuestionFullDto>> GetAllQuestions(int limit, int page, int weekNumber, int unitNumber)
+	{
+		throw new NotImplementedException();
 	}
 }
