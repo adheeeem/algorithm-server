@@ -21,7 +21,7 @@ public class QuestionRepository(IDbConnection connection) : IQuestionRepository
 
 	public async Task<List<QuestionFullDto>> GetAllQuestions(int limit, int page, int weekNumber, int unitNumber)
 	{
-		string query = "select question_tj, question_ru, question_en, options_tj, options_ru, options_en, answer_id, grade, unit_number, number from question inner join week on week.id = question.week_id ";
+		string query = "select question_tj as questionTj, question_ru as questionRu, question_en as questionEn, options_tj as optionsTj, options_ru as optionsRu, options_en as optionsEn, answer_id as answerId, grade, unit_number as unitNumber, number as weekNumber from question inner join week on week.id = question.week_id ";
 
 		if (weekNumber != 0 && unitNumber != 0)
 			query += "where number=@weekNumber and unit_number=@unitNumber ";

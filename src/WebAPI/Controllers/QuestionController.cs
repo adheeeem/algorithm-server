@@ -21,5 +21,12 @@ namespace WebAPI.Controllers
 			var questionId = await _questionService.AddNewQuestion(request);
 			return Ok(questionId);
 		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetAllQuestions([FromQuery] int limit, [FromQuery] int page, [FromQuery] int weekNumber, [FromQuery] int unitNumber)
+		{
+			var result = await _questionService.GetAllQuestions(limit, page, weekNumber, unitNumber);
+			return Ok(result);
+		}
 	}
 }

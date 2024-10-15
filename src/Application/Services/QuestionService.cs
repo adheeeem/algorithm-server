@@ -31,6 +31,8 @@ public class QuestionService(IQuestionRepository questionRepository, IWeekReposi
 
 	public async Task<ListedResponse<QuestionFullDto>> GetAllQuestions(int limit, int page, int weekNumber, int unitNumber)
 	{
-		throw new NotImplementedException();
+		var questions = await questionRepository.GetAllQuestions(limit, page, weekNumber, unitNumber);
+		var questionsCount = await questionRepository.GetQuestionCount();
+		return new ListedResponse<QuestionFullDto> { Items = questions, Total = questionsCount };
 	}
 }

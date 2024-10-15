@@ -23,6 +23,9 @@ public class CustomExceptionHandler : IExceptionFilter
 			case RecordAlreadyExistsException:
 				error.StatusCode = HttpStatusCode.BadRequest;
 				break;
+			case BadRequestException:
+				error.StatusCode = HttpStatusCode.BadRequest;
+				break;
 		}
 		context.Result = new JsonResult(error);
 	}
