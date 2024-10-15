@@ -19,24 +19,31 @@ public class QuestionRepository(IDbConnection connection) : IQuestionRepository
 		return id;
 	}
 
-	public async Task<List<QuestionFullDto>> GetAllQuestions(int limit, int page, int weekNumber, int unitNumber)
+	public async Task DeleteQuestion(int id)
 	{
-		string query = "select question_tj as questionTj, question_ru as questionRu, question_en as questionEn, options_tj as optionsTj, options_ru as optionsRu, options_en as optionsEn, answer_id as answerId, grade, unit_number as unitNumber, number as weekNumber from question inner join week on week.id = question.week_id ";
+		string query = $"delete from {QuestionTable} where id = @id";
+		await connection.ExecuteAsync(query, new { id });
+	}
 
-		if (weekNumber != 0 && unitNumber != 0)
-			query += "where number=@weekNumber and unit_number=@unitNumber ";
-		else if (weekNumber != 0 && unitNumber == 0)
-			query += "where number=@weekNumber ";
-		else if (weekNumber == 0 && unitNumber != 0)
-			query += "where unit_number=@unitNumber ";
+	public async Task<List<QuestionFullDto>> GetAllQuestions(int limit, int page, int weekNumber, int unitNumber, int grade)
+	{
+		string query = "select question.id, question_tj as questionTj, question_ru as questionRu, question_en as questionEn, options_tj as optionsTj, options_ru as optionsRu, options_en as optionsEn, answer_id as answerId, grade, unit_number as unitNumber, number as weekNumber from question inner join week on week.id = question.week_id ";
+
+		var conditions = new List<string>();
+		if (weekNumber != 0) conditions.Add("number = @weekNumber");
+		if (unitNumber != 0) conditions.Add("unit_number = @unitNumber");
+		if (grade != 0) conditions.Add("grade = @grade");
+
+		if (conditions.Count != 0)
+			query += "where " + string.Join(" and ", conditions);
 
 		if (limit != 0)
 			if (page != 0)
-				query += $"limit {limit} offset {(page - 1) * limit}";
+				query += $" limit {limit} offset {(page - 1) * limit}";
 			else
-				query += $"limit {limit}";
+				query += $" limit {limit}";
 
-		var result = await connection.QueryAsync<QuestionFullDto>(query, new {unitNumber, weekNumber});
+		var result = await connection.QueryAsync<QuestionFullDto>(query, new { unitNumber, weekNumber, grade });
 		return result.ToList();
 	}
 

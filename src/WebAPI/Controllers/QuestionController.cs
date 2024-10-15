@@ -23,10 +23,17 @@ namespace WebAPI.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetAllQuestions([FromQuery] int limit, [FromQuery] int page, [FromQuery] int weekNumber, [FromQuery] int unitNumber)
+		public async Task<IActionResult> GetAllQuestions([FromQuery] int limit, [FromQuery] int page, [FromQuery] int weekNumber, [FromQuery] int unitNumber, [FromQuery] int grade)
 		{
-			var result = await _questionService.GetAllQuestions(limit, page, weekNumber, unitNumber);
+			var result = await _questionService.GetAllQuestions(limit, page, weekNumber, unitNumber, grade);
 			return Ok(result);
+		}
+
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteQuestion(int id)
+		{
+			await _questionService.DeleteQuestion(id);
+			return Ok();
 		}
 	}
 }
