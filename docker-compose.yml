@@ -9,3 +9,13 @@ services:
       - POSTGRES_USER=algorithm
       - POSTGRES_PASSWORD=academyofalgorithm2021
       - POSTGRES_DB=algorithm_db
+
+  azurite:
+      image: mcr.microsoft.com/azure-storage/azurite
+      container_name: "algorithm-questions"
+      hostname: azurite
+      restart: always
+      ports:
+        - "10000:10000"
+        - "10001:10001"
+        - "10002:10002"

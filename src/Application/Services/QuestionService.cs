@@ -3,10 +3,11 @@ using Application.Exceptions;
 using Application.Interfaces;
 using Application.Requests;
 using Application.Responses;
+using Application.Storage;
 
 namespace Application.Services;
 
-public class QuestionService(IQuestionRepository questionRepository, IWeekRepository weekRepository)
+public class QuestionService(IQuestionRepository questionRepository, IWeekRepository weekRepository, IBlobService blobService)
 {
 	public async Task<int> AddNewQuestion(CreateQuestionRequest request)
 	{
@@ -41,5 +42,13 @@ public class QuestionService(IQuestionRepository questionRepository, IWeekReposi
 	public async Task DeleteQuestion(int questionId)
 	{
 		await questionRepository.DeleteQuestion(questionId);
+	}
+
+	public async Task UploadQuestionImage(Stream imageStream, string contentType, int questionId)
+	{
+		if (!(await questionRepository.CheckIfQuestionExists(questionId)))
+			throw new RecordNotFoundException("Question with this id does not exist.");
+		Guid imageGuid = await blobService.UploadAsync(imageStream, contentType);
+		await questionRepository.SetImageId(questionId, imageGuid);
 	}
 }

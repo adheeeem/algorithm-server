@@ -8,4 +8,6 @@ public interface IQuestionRepository
 	Task<List<QuestionFullDto>> GetAllQuestions(int limit, int page, int weekNumber, int unitNumber, int grade);
 	Task<int> GetQuestionCount();
 	Task DeleteQuestion(int id);
+	Task SetImageId(int questionId, Guid imageId);
+	Task<bool> CheckIfQuestionExists(int questionId);
 }

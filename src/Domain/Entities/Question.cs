@@ -8,6 +8,7 @@ public class Question
     public string[] OptionsTj { get; set; } = [];
     public string[] OptionsRu { get; set; } = [];
     public string[] OptionsEn { get; set; } = [];
+    public Guid ImageId { get; set; }
     public int AnswerId { get; set; }
     public int WeekId { get; set; }
 }

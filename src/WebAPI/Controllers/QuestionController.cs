@@ -35,5 +35,13 @@ namespace WebAPI.Controllers
 			await _questionService.DeleteQuestion(id);
 			return Ok();
 		}
+
+		[HttpPost]
+		[Route("upload-image/{id}")]
+		public async Task<IActionResult> UploadProductImage(int id, IFormFile file)
+		{
+			await _questionService.UploadQuestionImage(file.OpenReadStream(), file.ContentType, id);
+			return Ok();
+		}
 	}
 }

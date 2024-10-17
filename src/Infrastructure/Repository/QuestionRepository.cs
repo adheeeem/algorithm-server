@@ -19,6 +19,13 @@ public class QuestionRepository(IDbConnection connection) : IQuestionRepository
 		return id;
 	}
 
+	public async Task<bool> CheckIfQuestionExists(int questionId)
+	{
+		var query = $"select 1 from {QuestionTable} where id=@questionId";
+		int id = await connection.QuerySingleOrDefaultAsync<int>(query, new { questionId });
+		return id == 1;
+	}
+
 	public async Task DeleteQuestion(int id)
 	{
 		string query = $"delete from {QuestionTable} where id = @id";
@@ -52,5 +59,11 @@ public class QuestionRepository(IDbConnection connection) : IQuestionRepository
 		string query = $"select count(*) from {QuestionTable};";
 		int cnt = await connection.ExecuteScalarAsync<int>(query);
 		return cnt;
+	}
+
+	public async Task SetImageId(int questionId, Guid imageId)
+	{
+		string query = $"update {QuestionTable} set image_id = @imageId where id = @questionId;";
+		await connection.ExecuteAsync(query, new { questionId, imageId });
 	}
 }
