@@ -13,10 +13,13 @@ builder.Services.AddControllers(cfg =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Configuration.AddEnvironmentVariables();
 
+
+// Sentry
 builder.WebHost.UseSentry(o =>
 {
 	o.Dsn = "https://482a51ecb624492e82605744d2ba3ee6@o4508132314710016.ingest.de.sentry.io/4508132358684752";
 	o.Debug = true;
+	o.TracesSampleRate = 1;
 });
 
 builder.Services.AddCors(options =>
@@ -28,12 +31,12 @@ builder.Services.AddCors(options =>
 		.AllowAnyMethod();
 	});
 });
-
-SentrySdk.CaptureMessage("Hello Sentry");
+builder.Logging.AddConfiguration(builder.Configuration).AddSentry();
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
+
 
 builder.WebHost.ConfigureKestrel(options =>
 {
