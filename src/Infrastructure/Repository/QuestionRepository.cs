@@ -34,7 +34,7 @@ public class QuestionRepository(IDbConnection connection) : IQuestionRepository
 
 	public async Task<List<QuestionFullDto>> GetAllQuestions(int limit, int page, int weekNumber, int unitNumber, int grade)
 	{
-		string query = "select question.id, question_tj as questionTj, question_ru as questionRu, question_en as questionEn, options_tj as optionsTj, options_ru as optionsRu, options_en as optionsEn, answer_id as answerId, grade, unit_number as unitNumber, number as weekNumber from question inner join week on week.id = question.week_id ";
+		string query = "select question.id, question_tj as questionTj, question_ru as questionRu, question_en as questionEn, options_tj as optionsTj, options_ru as optionsRu, options_en as optionsEn, answer_id as answerId, grade, unit_number as unitNumber, number as weekNumber, image_id as imageId from question inner join week on week.id = question.week_id ";
 
 		var conditions = new List<string>();
 		if (weekNumber != 0) conditions.Add("number = @weekNumber");

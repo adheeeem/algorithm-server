@@ -12,5 +12,6 @@ public class QuestionFullDto
     public int Grade { get; set; }
     public int WeekNumber { get; set; }
     public int UnitNumber { get; set; }
+    public string ImageId { get; set; } = string.Empty;
     public int AnswerId { get; set; }
 }
