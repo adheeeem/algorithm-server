@@ -22,5 +22,6 @@ public static class ConfigureServices
 		services.AddScoped<ISchoolRepository, SchoolRepository>();
 		services.AddScoped<IQuestionRepository, QuestionRepository>();
 		services.AddScoped<IWeekRepository, WeekRepository>();
+		services.AddScoped<IUserRepository, UserRepository>();
 	}
 }

@@ -2,8 +2,8 @@
 
 public enum Role
 {
-	Superadmin = 0,
-	Administrator = 1,
-	Editor = 2,
-	Student = 3
+	Superadmin = 1,
+	Administrator = 2,
+	Editor = 3,
+	Student = 4
 }

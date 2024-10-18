@@ -10,5 +10,6 @@ public static class ApplicationServices
 		services.AddScoped<SchoolService>();
 		services.AddScoped<QuestionService>();
 		services.AddScoped<WeekService>();
+		services.AddScoped<UserService>();
 	}
 }
