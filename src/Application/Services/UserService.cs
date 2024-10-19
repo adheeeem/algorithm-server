@@ -57,4 +57,29 @@ public class UserService(IUserRepository userRepository, ISchoolRepository schoo
 		response.ExpiresAt = 7200000;
 		return response;
 	}
+
+	public async Task<UserResponse> GetUser(int id)
+	{
+		var user = await userRepository.GetUserById(id);
+		if (user == null)
+			throw new RecordNotFoundException("user with this id does not exist");
+		var userResponse = new UserResponse()
+		{
+			Id = user.Id,
+			Username = user.Username,
+			Firstname = user.Firstname,
+			Lastname = user.Lastname,
+			Email = user.Email,
+			Phone = user.Phone,
+			Grade = user.Grade,
+			SchoolId = user.SchoolId,
+			TotalScore = user.TotalScore,
+			DateOfBirth = user.DateOfBirth,
+			Gender = user.Gender,
+			Role = user.Role,
+			IsActive = user.IsActive,
+		};
+
+		return userResponse;
+	}
 }

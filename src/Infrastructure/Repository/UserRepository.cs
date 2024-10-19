@@ -28,6 +28,13 @@ public class UserRepository(IDbConnection connection) : IUserRepository
 		return id;
 	}
 
+	public async Task<User> GetUserById(int id)
+	{
+		string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, is_active as isActive, dob as dateOfBirth, gender, role from {UserTable} where id=@id;";
+		var result = await connection.QueryFirstOrDefaultAsync<User>(query, new { id });
+		return result;
+	}
+
 	public async Task<User> GetUserByUsername(string username)
 	{
 		string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, dob, gender, role from {UserTable} where username=@username;";

@@ -33,5 +33,16 @@ namespace WebAPI.Controllers
 			var response = await _userService.Login(request);
 			return Ok(response);
 		}
+
+		[HttpGet]
+		[Authorize("Student")]
+		public async Task<IActionResult> GetUser()
+		{
+			var id = Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+			if (id == null)
+				return Unauthorized();
+			var user = await _userService.GetUser(int.Parse(id!));
+			return Ok(user);
+		}
 	}
 }
