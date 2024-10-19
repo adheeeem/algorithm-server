@@ -13,7 +13,7 @@ public class User
 	public int SchoolId { get; set; }
 	public int TotalScore { get; set; }
 	public string Email { get; set; } = string.Empty;
-	public DateTime DOB { get; set; }
+	public DateTime DateOfBirth { get; set; }
 	public Gender Gender { get; set; }
 	public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
 	public string PasswordHash { get; set; } = string.Empty;

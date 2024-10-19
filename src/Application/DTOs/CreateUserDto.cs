@@ -16,6 +16,5 @@ public class CreateUserDto
     public Gender Gender { get; set; }
     public string PasswordHash { get; set; } = string.Empty;
     public string Salt { get; set; } = string.Empty;
-    public Role Role { get; set; } = Role.Student;
     public bool IsActive { get; set; } = true;
 }

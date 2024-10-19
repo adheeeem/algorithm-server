@@ -12,8 +12,8 @@ public class UserRepository(IDbConnection connection) : IUserRepository
 	public async Task<int> CreateUser(CreateUserDto user)
 	{
 		string query = $"insert into {UserTable} " +
-			$"(firstname, lastname, username, phone, grade, school_id, total_score, email, dob, gender, password_hash, role, is_active, salt) values " +
-			$"(@firstname, @lastname, @username, @phone, @grade, @schoolId, @totalScore, @email, @dateOfBirth, @gender, @passwordHash, @role, @isActive, @salt) " +
+			$"(firstname, lastname, username, phone, grade, school_id, email, dob, gender, password_hash, salt) values " +
+			$"(@firstname, @lastname, @username, @phone, @grade, @schoolId, @email, @dateOfBirth, @gender, @passwordHash, @salt) " +
 			$"returning id;";
 		int id = await connection.ExecuteScalarAsync<int>(query, user);
 
@@ -22,7 +22,7 @@ public class UserRepository(IDbConnection connection) : IUserRepository
 
 	public async Task<User> GetUserByUsername(string username)
 	{
-		string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, dob, gender from {UserTable} where username=@username;";
+		string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, dob, gender, role from {UserTable} where username=@username;";
 		var result = await connection.QueryFirstOrDefaultAsync<User>(query, new { username });
 		return result;
 	}

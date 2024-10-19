@@ -10,7 +10,7 @@ namespace Application.Services;
 
 public class UserService(IUserRepository userRepository, ISchoolRepository schoolRepository, IConfiguration configuration)
 {
-	public async Task<int> CreateUser(CreateUserRequest request)
+	public async Task<int> Register(CreateUserRequest request)
 	{
 		if (!(await schoolRepository.CheckIfSchoolExists(request.SchoolId)))
 			throw new BadRequestException("School with this id number does not exist.");

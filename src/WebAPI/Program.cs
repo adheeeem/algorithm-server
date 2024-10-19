@@ -1,6 +1,12 @@
 using Infrastructure;
 using Application;
 using WebAPI.Exceptions;
+using Microsoft.OpenApi.Models;
+using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +19,38 @@ builder.Services.AddControllers(cfg =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Configuration.AddEnvironmentVariables();
 
+builder.Services.AddSwaggerGen(c =>
+{
+	c.SwaggerDoc("v1", new OpenApiInfo());
+	c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+	{
+		Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+		Name = "Authorization",
+		In = ParameterLocation.Header,
+		Type = SecuritySchemeType.ApiKey,
+		Scheme = "Bearer"
+	});
+
+	c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+	{
+		{
+			new OpenApiSecurityScheme
+			{
+				Reference = new OpenApiReference
+				{
+					Type = ReferenceType.SecurityScheme,
+					Id = "Bearer"
+				},
+				Scheme = "oauth2",
+				Name = "Bearer",
+				In = ParameterLocation.Header,
+			},
+			new List<string>()
+		}
+	});
+});
 
 // Sentry
 builder.WebHost.UseSentry(o =>
@@ -37,6 +75,45 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
+builder.Services.AddAuthentication(opt =>
+{
+	opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+	.AddJwtBearer(opt =>
+	{
+		opt.TokenValidationParameters = new TokenValidationParameters
+		{
+			ValidateIssuerSigningKey = true,
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSecret"]!)),
+			ValidateIssuer = false,
+			ValidateAudience = false,
+		};
+	});
+
+builder.Services.AddAuthorization(opt =>
+{
+	opt.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+
+	opt.AddPolicy(Role.Superadmin.ToString(),
+		op => op.RequireRole(
+			Role.Superadmin.ToString()));
+	opt.AddPolicy(Role.Administrator.ToString(),
+		op => op.RequireRole(
+			Role.Superadmin.ToString(),
+		Role.Administrator.ToString()));
+	opt.AddPolicy(Role.Editor.ToString(),
+		op => op.RequireRole(
+			Role.Editor.ToString(),
+		Role.Administrator.ToString(),
+		Role.Superadmin.ToString()));
+	opt.AddPolicy(Role.Student.ToString(),
+		op => op.RequireRole(
+			Role.Editor.ToString(),
+		Role.Administrator.ToString(),
+		Role.Superadmin.ToString(),
+		Role.Student.ToString()));
+});
 
 builder.WebHost.ConfigureKestrel(options =>
 {

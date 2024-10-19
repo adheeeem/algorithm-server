@@ -1,5 +1,7 @@
 ﻿using Application.Requests;
 using Application.Services;
+using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -16,10 +18,11 @@ namespace WebAPI.Controllers
 		}
 
 		[HttpPost]
+		[Authorize("Administrator")]
 		[Route("register")]
 		public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
 		{
-			int id = await _userService.CreateUser(request);
+			int id = await _userService.Register(request);
 			return Ok(id);
 		}
 
