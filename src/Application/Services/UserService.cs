@@ -40,13 +40,17 @@ public class UserService(IUserRepository userRepository, ISchoolRepository schoo
 	public async Task<AuthenticationResponse> Login(LoginRequest request)
 	{
 		var response = new AuthenticationResponse();
+
+		if (!(await userRepository.CheckIfUserExists(request.Username)))
+			throw new BadRequestException("invalid username or password");
+
 		var result = await userRepository.GetUserPasswordHashAndSalt(request.Username);
 
 		byte[] saltBytes = Convert.FromBase64String(result.Item2);
 
 		string hashedPassword = ApplicationUtils.HashPassword(request.Password, saltBytes);
 		if (string.Compare(result.Item1, hashedPassword) != 0)
-			throw new BadRequestException("invalid password");
+			throw new BadRequestException("invalid username or password");
 
 		var user = await userRepository.GetUserByUsername(request.Username);
 		response.AccessToken = ApplicationUtils.GenerateJwtToken(configuration, user);

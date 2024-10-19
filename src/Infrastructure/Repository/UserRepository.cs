@@ -9,6 +9,14 @@ namespace Infrastructure.Repository;
 public class UserRepository(IDbConnection connection) : IUserRepository
 {
 	private const string UserTable = "app_user";
+
+	public async Task<bool> CheckIfUserExists(string username)
+	{
+		var query = $"select 1 from {UserTable} where username = @username";
+		int id = await connection.QuerySingleOrDefaultAsync<int>(query, new { username });
+		return id == 1;
+	}
+
 	public async Task<int> CreateUser(CreateUserDto user)
 	{
 		string query = $"insert into {UserTable} " +
