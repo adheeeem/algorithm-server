@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using Dapper;
+using Domain.Entities;
 using System.Data;
 
 namespace Infrastructure.Repository;
@@ -20,5 +21,32 @@ public class SchoolRepository(IDbConnection connection) : ISchoolRepository
 	{
 		var result = await connection.ExecuteScalarAsync<int>($"insert into {SchoolTable} (name, region, city, country) values (@name, @region, @city, @country) returning id", school);
 		return result;
+	}
+
+	public async Task<List<School>> GetSchools(int limit = 0, int page = 0, string name = "", string region = "", string city = "", string country = "")
+	{
+		string query = $"select * from {SchoolTable} ";
+
+		var conditions = new List<string>();
+		if (name.Length != 0)
+			conditions.Add("name = @name");
+		if (region.Length != 0)
+			conditions.Add("region = @region");
+		if (city.Length != 0)
+			conditions.Add("city = @city");
+		if (country.Length != 0)
+			conditions.Add("country = @country");
+
+		if (conditions.Count != 0)
+			query += "where " + string.Join(" and ", conditions);
+
+		if (limit != 0)
+			if (page != 0)
+				query += $" limit {limit} offset {(page - 1) * limit}";
+			else
+				query += $" limit {limit}";
+
+		var result = await connection.QueryAsync<School>(query, new {name, region, city, country, limit, page});
+		return result.ToList();
 	}
 }
