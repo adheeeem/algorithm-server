@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
 using Application.Requests;
+using Application.Responses;
 using Domain.Entities;
 
 namespace Application.Services;
@@ -13,9 +14,13 @@ public class SchoolService(ISchoolRepository schoolRepository)
 		var id = await schoolRepository.CreateSchool(schoolDto);
 		return id;
 	}
-	public async Task<List<School>> GetSchools(int limit = 0, int page = 0, string name = "", string region = "", string city = "", string country = "")
+	public async Task<ListedResponse<School>> GetSchools(int limit = 0, int page = 0, string name = "", string region = "", string city = "", string country = "")
 	{
-		var response = await schoolRepository.GetSchools(limit, page, name, region, city, country);
+		var response = new ListedResponse<School>();
+		var schools = await schoolRepository.GetSchools(limit, page, name, region, city, country);
+		var cnt = await schoolRepository.GetSchoolCount();
+		response.Items = schools;
+		response.Total = cnt;
 		return response;
 	}
 }

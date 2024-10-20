@@ -23,6 +23,13 @@ public class SchoolRepository(IDbConnection connection) : ISchoolRepository
 		return result;
 	}
 
+	public async Task<int> GetSchoolCount()
+	{
+		string query = $"select count(*) from {SchoolTable};";
+		int cnt = await connection.ExecuteScalarAsync<int>(query);
+		return cnt;
+	}
+
 	public async Task<List<School>> GetSchools(int limit = 0, int page = 0, string name = "", string region = "", string city = "", string country = "")
 	{
 		string query = $"select * from {SchoolTable} ";
