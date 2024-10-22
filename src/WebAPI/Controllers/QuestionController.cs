@@ -1,5 +1,6 @@
 ﻿using Application.Requests;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -15,13 +16,15 @@ namespace WebAPI.Controllers
 			_questionService = questionService;
 		}
 
+		[Authorize("Editor")]
 		[HttpPost]
-		public async Task<IActionResult> AddNewSchool([FromBody] CreateQuestionRequest request)
+		public async Task<IActionResult> AddQuestion([FromBody] CreateQuestionRequest request)
 		{
 			var questionId = await _questionService.AddNewQuestion(request);
 			return Ok(questionId);
 		}
 
+		[Authorize("Editor")]
 		[HttpGet]
 		public async Task<IActionResult> GetAllQuestions([FromQuery] int limit, [FromQuery] int page, [FromQuery] int weekNumber, [FromQuery] int unitNumber, [FromQuery] int grade)
 		{
@@ -29,6 +32,7 @@ namespace WebAPI.Controllers
 			return Ok(result);
 		}
 
+		[Authorize("Editor")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteQuestion(int id)
 		{
@@ -36,6 +40,7 @@ namespace WebAPI.Controllers
 			return Ok();
 		}
 
+		[Authorize("Editor")]
 		[HttpPost]
 		[Route("upload-image/{id}")]
 		public async Task<IActionResult> UploadProductImage(int id, IFormFile file)

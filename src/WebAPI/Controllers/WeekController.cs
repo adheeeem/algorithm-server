@@ -1,5 +1,6 @@
 ﻿using Application.Requests;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -15,6 +16,7 @@ namespace WebAPI.Controllers
 			_weekService = weekService;
 		}
 
+		[Authorize("Administrator")]
 		[HttpPost]
 		public async Task<IActionResult> CreateWeek([FromBody] CreateWeekRequest request)
 		{

@@ -16,6 +16,7 @@ namespace WebAPI.Controllers
 			_schoolService = schoolService;
 		}
 
+		[Authorize("Administrator")]
 		[HttpPost]
 		public async Task<IActionResult> AddNewSchool([FromBody] CreateSchoolRequest request)
 		{
