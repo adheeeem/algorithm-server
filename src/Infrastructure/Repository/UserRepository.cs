@@ -6,7 +6,7 @@ using System.Data;
 
 namespace Infrastructure.Repository;
 
-public class UserRepository(IDbConnection connection) : IUserRepository
+public class UserRepository(IDbConnection connection, IUserEnrollmentRepository userEnrollmentRepository) : IUserRepository
 {
 	private const string UserTable = "app_user";
 
@@ -19,13 +19,21 @@ public class UserRepository(IDbConnection connection) : IUserRepository
 
 	public async Task<int> CreateUser(CreateUserDto user)
 	{
-		string query = $"insert into {UserTable} " +
-			$"(firstname, lastname, username, phone, grade, school_id, email, dob, gender, password_hash, salt) values " +
-			$"(@firstname, @lastname, @username, @phone, @grade, @schoolId, @email, @dateOfBirth, @gender, @passwordHash, @salt) " +
-			$"returning id;";
-		int id = await connection.ExecuteScalarAsync<int>(query, user);
+		connection.Open();
+		using (var transaction = connection.BeginTransaction())
+		{
+			string query = $"insert into {UserTable} " +
+				$"(firstname, lastname, username, phone, grade, school_id, email, dob, gender, password_hash, salt) values " +
+				$"(@firstname, @lastname, @username, @phone, @grade, @schoolId, @email, @dateOfBirth, @gender, @passwordHash, @salt) " +
+				$"returning id;";
+			int id = await connection.ExecuteScalarAsync<int>(query, user);
 
-		return id;
+			var enrollmentId = userEnrollmentRepository.CreateUserEnrollment(id, 1);
+
+			transaction.Commit();
+			return id;
+		}
+
 	}
 
 	public async Task<User> GetUserById(int id)
