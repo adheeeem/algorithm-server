@@ -19,21 +19,36 @@ public class UserRepository(IDbConnection connection, IUserEnrollmentRepository 
 
 	public async Task<int> CreateUser(CreateUserDto user)
 	{
-		connection.Open();
+		connection.Open(); // Use async open
 		using (var transaction = connection.BeginTransaction())
 		{
-			string query = $"insert into {UserTable} " +
-				$"(firstname, lastname, username, phone, grade, school_id, email, dob, gender, password_hash, salt) values " +
-				$"(@firstname, @lastname, @username, @phone, @grade, @schoolId, @email, @dateOfBirth, @gender, @passwordHash, @salt) " +
-				$"returning id;";
-			int id = await connection.ExecuteScalarAsync<int>(query, user);
+			try
+			{
+				string query = $"insert into {UserTable} " +
+				               $"(firstname, lastname, username, phone, grade, school_id, email, dob, gender, password_hash, salt) values " +
+				               $"(@firstname, @lastname, @username, @phone, @grade, @schoolId, @email, @dateOfBirth, @gender, @passwordHash, @salt) " +
+				               $"returning id;";
 
-			var enrollmentId = userEnrollmentRepository.CreateUserEnrollment(id, 1);
+				// Pass the transaction to the command
+				int id = await connection.ExecuteScalarAsync<int>(query, user, transaction);
 
-			transaction.Commit();
-			return id;
+				// Ensure userEnrollment is awaited if it's async
+				await userEnrollmentRepository.CreateUserEnrollment(id, 1);
+
+				transaction.Commit();
+				return id;
+			}
+			catch (Exception ex)
+			{
+				// Log the exception
+				transaction.Rollback();
+				throw; // Rethrow or handle as appropriate
+			}
+			finally
+			{
+				connection.Close(); // Ensure the connection is closed
+			}
 		}
-
 	}
 
 	public async Task<User> GetUserById(int id)
