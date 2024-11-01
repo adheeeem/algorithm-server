@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
 		}
 
 		[HttpPost]
-		[Authorize("Administrator")]
+		// [Authorize("Administrator")]
 		[Route("register")]
 		public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
 		{

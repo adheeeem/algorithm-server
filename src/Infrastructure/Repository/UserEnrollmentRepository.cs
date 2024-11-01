@@ -16,10 +16,10 @@ public class UserEnrollmentRepository(IDbConnection connection) : IUserEnrollmen
 		return response == 1;
 	}
 
-	public async Task<int> CreateUserEnrollment(int userId, int unitNumber, bool isPaid = false)
+	public async Task<int> CreateUserEnrollment(int userId, int unitNumber, bool isPaid = false, IDbTransaction transaction = null)
 	{
 		string query = $"insert into {UserEnrollmentTable} (app_user_id, unit_number, paid) values (@userId, @unitNumber, @isPaid) returning id";
-		var response = await connection.ExecuteScalarAsync<int>(query, new { userId, unitNumber, isPaid });
+		var response = await connection.ExecuteScalarAsync<int>(query, new { userId, unitNumber, isPaid }, transaction);
 		return response;
 	}
 
