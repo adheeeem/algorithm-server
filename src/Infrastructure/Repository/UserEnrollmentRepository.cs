@@ -8,6 +8,7 @@ namespace Infrastructure.Repository;
 public class UserEnrollmentRepository(IDbConnection connection) : IUserEnrollmentRepository
 {
 	private const string UserEnrollmentTable = "app_user_enrollment";
+	private const string AppUserWeeklyActivity = "app_user_weekly_activity";
 
 	public async Task<bool> CheckIfUserPaidForUnit(int userId, int unitNumber)
 	{
@@ -41,6 +42,4 @@ public class UserEnrollmentRepository(IDbConnection connection) : IUserEnrollmen
 		string query = $"update {UserEnrollmentTable} set paid=@isPaid where unit_number=@unitNumber and app_user_id=@userId;";
 		await connection.ExecuteScalarAsync<bool>(query, new { userId, isPaid, unitNumber });
 	}
-
-
 }
