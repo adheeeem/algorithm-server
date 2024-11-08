@@ -34,7 +34,7 @@ public class UserEnrollmentService(IUserEnrollmentRepository userEnrollmentRepos
 
 	public async Task EnrollUser(int userId, int unitNumber)
 	{
-		if (unitNumber < 1 || unitNumber > 8)
+		if (unitNumber is < 1 or > 8)
 			throw new BadRequestException("invalid unit number range.");
 		if (await userRepository.GetUserById(userId) == null)
 			throw new RecordNotFoundException("user with this userid does not exist.");
