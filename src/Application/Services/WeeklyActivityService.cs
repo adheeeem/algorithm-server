@@ -2,7 +2,7 @@ using Application.Interfaces;
 
 namespace Application.Services;
 
-public class WeeklyActivityService(IUserWeeklyActivity userWeeklyActivity, IWeekRepository weekRepository)
+public class WeeklyActivityService(IUnitOfWork unitOfWork)
 {
     
 }

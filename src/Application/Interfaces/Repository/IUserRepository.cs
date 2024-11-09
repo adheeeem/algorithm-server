@@ -1,7 +1,7 @@
 ﻿using Application.DTOs;
 using Domain.Entities;
 
-namespace Application.Interfaces;
+namespace Application.Interfaces.Repository;
 
 public interface IUserRepository
 {

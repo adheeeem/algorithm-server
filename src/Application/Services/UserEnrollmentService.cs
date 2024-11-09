@@ -1,15 +1,14 @@
 ﻿using Application.Exceptions;
 using Application.Interfaces;
 using Application.Responses;
-using System.Runtime.CompilerServices;
 
 namespace Application.Services;
 
-public class UserEnrollmentService(IUserEnrollmentRepository userEnrollmentRepository, IUserRepository userRepository)
+public class UserEnrollmentService(IUnitOfWork unitOfWork)
 {
 	public async Task<UserEnrollmentResponse> GetUserEnrollmentResponse(int userId, int unitNumber)
 	{
-		var result = await userEnrollmentRepository.GetUserEnrollment(userId, unitNumber);
+		var result = await unitOfWork.UserEnrollmentRepository.GetUserEnrollment(userId, unitNumber);
 		if (result == null)
 			throw new RecordNotFoundException("user enrollment not found");
 		var response = new UserEnrollmentResponse()
@@ -25,22 +24,22 @@ public class UserEnrollmentService(IUserEnrollmentRepository userEnrollmentRepos
 
 	public async Task UpdateUserEnrollmentPaidStatus(int userId, int unitNumber, bool isPaid)
 	{
-		if (await userRepository.GetUserById(userId) == null)
+		if (await unitOfWork.UserRepository.GetUserById(userId) == null)
 			throw new RecordNotFoundException("user with id number does not exist");
-		if (await userEnrollmentRepository.GetUserEnrollment(userId, unitNumber) == null)
+		if (await unitOfWork.UserEnrollmentRepository.GetUserEnrollment(userId, unitNumber) == null)
 			throw new RecordNotFoundException("user enrollment not found");
-		await userEnrollmentRepository.UpdateUserEnrollmentPaidStatus(userId, unitNumber, isPaid);
+		await unitOfWork.UserEnrollmentRepository.UpdateUserEnrollmentPaidStatus(userId, unitNumber, isPaid);
 	}
 
 	public async Task EnrollUser(int userId, int unitNumber)
 	{
 		if (unitNumber is < 1 or > 8)
 			throw new BadRequestException("invalid unit number range.");
-		if (await userRepository.GetUserById(userId) == null)
+		if (await unitOfWork.UserRepository.GetUserById(userId) == null)
 			throw new RecordNotFoundException("user with this userid does not exist.");
-		if (!(await userEnrollmentRepository.CheckIfUserPaidForUnit(userId, unitNumber)))
+		if (!(await unitOfWork.UserEnrollmentRepository.CheckIfUserPaidForUnit(userId, unitNumber)))
 			throw new BadRequestException("make payment before enrolling to the unit");
 
-		await userEnrollmentRepository.EnrollUser(userId, unitNumber);
+		await unitOfWork.UserEnrollmentRepository.EnrollUser(userId, unitNumber);
 	}
 }

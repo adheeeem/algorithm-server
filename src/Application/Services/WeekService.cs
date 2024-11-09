@@ -5,13 +5,13 @@ using Application.Requests;
 
 namespace Application.Services;
 
-public class WeekService(IWeekRepository weekRepository)
+public class WeekService(IUnitOfWork unitOfWork)
 {
 	public async Task<int> CreateWeek(CreateWeekRequest request)
 	{
 		if (!((request.Grade > 0 && request.Grade < 12) && (request.Number > 0 && request.Number < 5) && (request.UnitNumber > 0 && request.UnitNumber < 9)))
 			throw new BadRequestException("Invalid request, make sure everything in proper range.");
-		bool check = await weekRepository.CheckIfWeekExists(request.UnitNumber, request.Number, request.Grade);
+		bool check = await unitOfWork.WeekRepository.CheckIfWeekExists(request.UnitNumber, request.Number, request.Grade);
 		if (check)
 			throw new RecordAlreadyExistsException("Week with this number, grade and unit number already exists.");
 		var week = new CreateWeekDto
@@ -21,6 +21,6 @@ public class WeekService(IWeekRepository weekRepository)
 			QuestionsDownloadUrl = request.QuestionsDownloadUrl,
 			Grade = request.Grade
 		};
-		return await weekRepository.CreateWeek(week);
+		return await unitOfWork.WeekRepository.CreateWeek(week);
 	}
 }

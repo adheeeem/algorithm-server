@@ -1,4 +1,4 @@
-﻿using Application.Interfaces;
+﻿using Application.Interfaces.Repository;
 using Application.Storage;
 using Azure.Storage.Blobs;
 using Infrastructure.Repository;
@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System.Data;
+using Application.Interfaces;
 
 namespace Infrastructure;
 
@@ -24,5 +25,8 @@ public static class ConfigureServices
 		services.AddScoped<IWeekRepository, WeekRepository>();
 		services.AddScoped<IUserRepository, UserRepository>();
 		services.AddScoped<IUserEnrollmentRepository, UserEnrollmentRepository>();
+		services.AddScoped<IUserWeeklyActivityRepository, UserWeeklyActivityRepository>();
+		services.AddScoped<IUnitOfWork, UnitOfWork>();
+		services.AddScoped<IUserUtils, UserUtils>();
 	}
 }

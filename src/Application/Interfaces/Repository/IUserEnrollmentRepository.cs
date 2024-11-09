@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Domain.Entities;
 
-namespace Application.Interfaces;
+namespace Application.Interfaces.Repository;
 
 public interface IUserEnrollmentRepository
 {

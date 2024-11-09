@@ -1,11 +1,15 @@
 ﻿namespace Application.Interfaces;
 
+using Repository;
+
 public interface IUnitOfWork : IDisposable
 {
     IWeekRepository WeekRepository { get; }
     IUserRepository UserRepository { get; }
     ISchoolRepository SchoolRepository { get; }
-    IUserWeeklyActivity UserWeeklyActivity { get; }
+    IUserWeeklyActivityRepository UserWeeklyActivityRepository { get; }
+    IQuestionRepository QuestionRepository { get; } 
+    IUserEnrollmentRepository UserEnrollmentRepository { get; }
     void Commit();
     void Rollback();
 }

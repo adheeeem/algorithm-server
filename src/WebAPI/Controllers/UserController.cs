@@ -1,6 +1,5 @@
 ﻿using Application.Requests;
 using Application.Services;
-using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

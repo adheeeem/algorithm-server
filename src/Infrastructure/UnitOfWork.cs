@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Application.Interfaces.Repository;
 using Application.Interfaces;
 
 namespace Infrastructure;
@@ -7,16 +8,32 @@ public class UnitOfWork : IUnitOfWork
 {
     private IDbTransaction _transaction;
     public IWeekRepository WeekRepository { get; }
-    private IDbConnection _connection;
-    public IUserRepository UserRepository { get; }
+    public IUserRepository UserRepository { get; set; }
     public ISchoolRepository SchoolRepository { get; }
-    public IUserWeeklyActivity UserWeeklyActivity { get; }
+    public IUserWeeklyActivityRepository UserWeeklyActivityRepository { get; }
+    public IQuestionRepository QuestionRepository { get; }
+    public IUserEnrollmentRepository UserEnrollmentRepository { get; }
     private bool _disposed;
     
-    public UnitOfWork(IDbConnection connection)
+    public UnitOfWork(IDbConnection connection,
+        IWeekRepository weekRepository,
+        IUserRepository userRepository,
+        ISchoolRepository schoolRepository,
+        IUserWeeklyActivityRepository userWeeklyActivityRepository,
+        IQuestionRepository questionRepository,
+        IUserEnrollmentRepository userEnrollmentRepository
+        )
     {
+        var connectionState = connection.State == ConnectionState.Closed;
+        if (connectionState)
+            connection.Open();
         _transaction = connection.BeginTransaction();
-        _connection = connection;
+        WeekRepository = weekRepository;
+        UserRepository = userRepository;
+        SchoolRepository = schoolRepository;
+        UserWeeklyActivityRepository = userWeeklyActivityRepository;
+        QuestionRepository = questionRepository;
+        UserEnrollmentRepository = userEnrollmentRepository;
     }
     
     public void Commit()
@@ -62,11 +79,6 @@ public class UnitOfWork : IUnitOfWork
                 {
                     _transaction.Dispose();
                     _transaction = null;
-                }
-                if(_connection != null)
-                {
-                    _connection.Dispose();
-                    _connection = null;
                 }
             }
             _disposed = true;

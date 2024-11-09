@@ -1,5 +1,5 @@
 ﻿using Application.DTOs;
-using Application.Interfaces;
+using Application.Interfaces.Repository;
 using Dapper;
 using Domain.Entities;
 using System.Data;

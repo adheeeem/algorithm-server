@@ -1,10 +1,10 @@
 using System.Data;
-using Application.Interfaces;
+using Application.Interfaces.Repository;
 using Dapper;
 
 namespace Infrastructure.Repository;
 
-public class UserWeeklyActivity(IDbConnection connection) : IUserWeeklyActivity
+public class UserWeeklyActivityRepository(IDbConnection connection) : IUserWeeklyActivityRepository
 {
     private const string AppUserWeeklyActivity = "app_user_weekly_activity";
     public async Task CreateWeeklyActivity(int userId, int weekId, bool isCompleted = false)

@@ -12,5 +12,6 @@ public static class ApplicationServices
 		services.AddScoped<WeekService>();
 		services.AddScoped<UserService>();
 		services.AddScoped<UserEnrollmentService>();
+		
 	}
 }

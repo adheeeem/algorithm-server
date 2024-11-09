@@ -8,11 +8,11 @@ using System.Security.Cryptography;
 
 namespace Application.Services;
 
-public class UserService(IUserRepository userRepository, ISchoolRepository schoolRepository, IConfiguration configuration)
+public class UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
 {
 	public async Task<int> Register(CreateUserRequest request)
 	{
-		if (!(await schoolRepository.CheckIfSchoolExists(request.SchoolId)))
+		if (!(await unitOfWork.SchoolRepository.CheckIfSchoolExists(request.SchoolId)))
 			throw new BadRequestException("School with this id number does not exist.");
 
 		var userDto = new CreateUserDto();
@@ -34,17 +34,17 @@ public class UserService(IUserRepository userRepository, ISchoolRepository schoo
 		userDto.PasswordHash = hashedPassword;
 		userDto.Salt = Convert.ToBase64String(salt);
 
-		return await userRepository.CreateUser(userDto);
+		return await unitOfWork.UserRepository.CreateUser(userDto);
 	}
 
 	public async Task<AuthenticationResponse> Login(LoginRequest request)
 	{
 		var response = new AuthenticationResponse();
 
-		if (!(await userRepository.CheckIfUserExists(request.Username)))
+		if (!(await unitOfWork.UserRepository.CheckIfUserExists(request.Username)))
 			throw new BadRequestException("invalid username or password");
 
-		var result = await userRepository.GetUserPasswordHashAndSalt(request.Username);
+		var result = await unitOfWork.UserRepository.GetUserPasswordHashAndSalt(request.Username);
 
 		byte[] saltBytes = Convert.FromBase64String(result.Item2);
 
@@ -52,7 +52,7 @@ public class UserService(IUserRepository userRepository, ISchoolRepository schoo
 		if (string.Compare(result.Item1, hashedPassword) != 0)
 			throw new BadRequestException("invalid username or password");
 
-		var user = await userRepository.GetUserByUsername(request.Username);
+		var user = await unitOfWork.UserRepository.GetUserByUsername(request.Username);
 		response.AccessToken = ApplicationUtils.GenerateJwtToken(configuration, user);
 		response.ExpiresAt = 7200000;
 		return response;
@@ -60,7 +60,7 @@ public class UserService(IUserRepository userRepository, ISchoolRepository schoo
 
 	public async Task<UserResponse> GetUser(int id)
 	{
-		var user = await userRepository.GetUserById(id);
+		var user = await unitOfWork.UserRepository.GetUserById(id);
 		if (user == null)
 			throw new RecordNotFoundException("user with this id does not exist");
 		var userResponse = new UserResponse()
