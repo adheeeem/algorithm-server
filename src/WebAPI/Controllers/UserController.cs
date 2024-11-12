@@ -1,5 +1,6 @@
 ﻿using Application.Requests;
 using Application.Services;
+using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,21 +8,14 @@ namespace WebAPI.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class UserController : ControllerBase
+	public class UserController(UserService userService) : ControllerBase
 	{
-		private readonly UserService _userService;
-
-		public UserController(UserService userService)
-		{
-			_userService = userService;
-		}
-
 		[HttpPost]
-		[Authorize("Administrator")]
+		[Authorize(ApplicationPolicies.Administrator)]
 		[Route("register")]
 		public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
 		{
-			int id = await _userService.Register(request);
+			int id = await userService.Register(request);
 			return Ok(id);
 		}
 
@@ -29,18 +23,18 @@ namespace WebAPI.Controllers
 		[Route("login")]
 		public async Task<IActionResult> LoginUser([FromBody] LoginRequest request)
 		{
-			var response = await _userService.Login(request);
+			var response = await userService.Login(request);
 			return Ok(response);
 		}
 
 		[HttpGet]
-		[Authorize("Student")]
+		[Authorize(ApplicationPolicies.Student)]
 		public async Task<IActionResult> GetUser()
 		{
 			var id = Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
 			if (id == null)
 				return Unauthorized();
-			var user = await _userService.GetUser(int.Parse(id!));
+			var user = await userService.GetUser(int.Parse(id!));
 			return Ok(user);
 		}
 	}

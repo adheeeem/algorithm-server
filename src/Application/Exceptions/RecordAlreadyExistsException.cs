@@ -1,9 +1,3 @@
 ﻿namespace Application.Exceptions;
 
-public class RecordAlreadyExistsException : Exception
-{
-	public RecordAlreadyExistsException(string message) : base(message)
-	{
-
-	}
-}
+public class RecordAlreadyExistsException(string message) : Exception(message);

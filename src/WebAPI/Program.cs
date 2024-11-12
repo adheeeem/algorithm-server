@@ -95,24 +95,24 @@ builder.Services.AddAuthorization(opt =>
 {
 	opt.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
 
-	opt.AddPolicy(Role.Superadmin.ToString(),
+	opt.AddPolicy(ApplicationPolicies.SuperAdmin,
 		op => op.RequireRole(
-			Role.Superadmin.ToString()));
-	opt.AddPolicy(Role.Administrator.ToString(),
+			ApplicationPolicies.SuperAdmin));
+	opt.AddPolicy(ApplicationPolicies.Administrator,
 		op => op.RequireRole(
-			Role.Superadmin.ToString(),
-		Role.Administrator.ToString()));
-	opt.AddPolicy(Role.Editor.ToString(),
+			ApplicationPolicies.SuperAdmin,
+		ApplicationPolicies.Administrator));
+	opt.AddPolicy(ApplicationPolicies.Editor,
 		op => op.RequireRole(
-			Role.Editor.ToString(),
-		Role.Administrator.ToString(),
-		Role.Superadmin.ToString()));
-	opt.AddPolicy(Role.Student.ToString(),
+			ApplicationPolicies.Editor,
+		ApplicationPolicies.Administrator,
+		ApplicationPolicies.SuperAdmin));
+	opt.AddPolicy(ApplicationPolicies.Student,
 		op => op.RequireRole(
-			Role.Editor.ToString(),
-		Role.Administrator.ToString(),
-		Role.Superadmin.ToString(),
-		Role.Student.ToString()));
+			ApplicationPolicies.Editor,
+		ApplicationPolicies.Administrator,
+		ApplicationPolicies.SuperAdmin,
+		ApplicationPolicies.Student));
 });
 
 builder.WebHost.ConfigureKestrel(options =>
