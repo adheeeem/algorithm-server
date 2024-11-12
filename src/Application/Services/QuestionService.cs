@@ -13,7 +13,7 @@ public class QuestionService(IUnitOfWork unitOfWork, IBlobService blobService)
 	{
 		if (!((request.Grade > 0 && request.Grade < 12) && (request.WeekNumber > 0 && request.WeekNumber < 5) && (request.UnitNumber > 0 && request.UnitNumber < 9)))
 			throw new BadRequestException("Invalid request, make sure everything in proper range.");
-		int weekId = await unitOfWork.WeekRepository.GetWeekId(request.UnitNumber, request.WeekNumber, request.Grade);
+		var weekId = await unitOfWork.WeekRepository.GetWeekId(request.UnitNumber, request.WeekNumber, request.Grade);
 		if (weekId == 0)
 			throw new RecordNotFoundException("Week with this unit number and grade does not exist");
 		var questionDto = new CreateQuestionDto
@@ -27,7 +27,7 @@ public class QuestionService(IUnitOfWork unitOfWork, IBlobService blobService)
 			AnswerId = request.AnswerId,
 			WeekId = weekId,
 		};
-		int id = await unitOfWork.QuestionRepository.AddNewQuestion(questionDto);
+		var id = await unitOfWork.QuestionRepository.AddNewQuestion(questionDto);
 
 		return id;
 	}
@@ -48,7 +48,7 @@ public class QuestionService(IUnitOfWork unitOfWork, IBlobService blobService)
 	{
 		if (!(await unitOfWork.QuestionRepository.CheckIfQuestionExists(questionId)))
 			throw new RecordNotFoundException("Question with this id does not exist.");
-		Guid imageGuid = await blobService.UploadAsync(imageStream, contentType);
+		var imageGuid = await blobService.UploadAsync(imageStream, contentType);
 		await unitOfWork.QuestionRepository.SetImageId(questionId, imageGuid);
 	}
 }

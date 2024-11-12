@@ -12,8 +12,8 @@ public class SchoolRepository(IDbConnection connection) : ISchoolRepository
 
 	public async Task<bool> CheckIfSchoolExists(int schoolId)
 	{
-		var query = $"select 1 from {SchoolTable} where id = @schoolId";
-		int id = await connection.QuerySingleOrDefaultAsync<int>(query, new { schoolId });
+		const string query = $"select 1 from {SchoolTable} where id = @schoolId";
+		var id = await connection.QuerySingleOrDefaultAsync<int>(query, new { schoolId });
 		return id == 1;
 	}
 
@@ -25,14 +25,14 @@ public class SchoolRepository(IDbConnection connection) : ISchoolRepository
 
 	public async Task<int> GetSchoolCount()
 	{
-		string query = $"select count(*) from {SchoolTable};";
-		int cnt = await connection.ExecuteScalarAsync<int>(query);
+		const string query = $"select count(*) from {SchoolTable};";
+		var cnt = await connection.ExecuteScalarAsync<int>(query);
 		return cnt;
 	}
 
 	public async Task<List<School>> GetSchools(int limit = 0, int page = 0, string name = "", string region = "", string city = "", string country = "")
 	{
-		string query = $"select * from {SchoolTable} ";
+		var query = $"select * from {SchoolTable} ";
 
 		var conditions = new List<string>();
 		if (name.Length != 0)

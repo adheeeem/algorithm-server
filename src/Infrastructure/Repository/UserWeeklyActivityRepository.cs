@@ -9,7 +9,7 @@ public class UserWeeklyActivityRepository(IDbConnection connection) : IUserWeekl
     private const string AppUserWeeklyActivity = "app_user_weekly_activity";
     public async Task CreateWeeklyActivity(int userId, int weekId, bool isCompleted = false)
     {
-        var query = $"insert into {AppUserWeeklyActivity} (app_user_id, week_id, is_completed) values (@userId, @weekId, @isCompleted);";
+        const string query = $"insert into {AppUserWeeklyActivity} (app_user_id, week_id, is_completed) values (@userId, @weekId, @isCompleted);";
         await connection.ExecuteAsync(query, new {userId, weekId, isCompleted });
     }
 }

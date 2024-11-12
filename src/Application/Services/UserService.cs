@@ -46,10 +46,10 @@ public class UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
 
 		var result = await unitOfWork.UserRepository.GetUserPasswordHashAndSalt(request.Username);
 
-		byte[] saltBytes = Convert.FromBase64String(result.Item2);
+		var saltBytes = Convert.FromBase64String(result.Item2);
 
-		string hashedPassword = ApplicationUtils.HashPassword(request.Password, saltBytes);
-		if (string.Compare(result.Item1, hashedPassword) != 0)
+		var hashedPassword = ApplicationUtils.HashPassword(request.Password, saltBytes);
+		if (string.CompareOrdinal(result.Item1, hashedPassword) != 0)
 			throw new BadRequestException("invalid username or password");
 
 		var user = await unitOfWork.UserRepository.GetUserByUsername(request.Username);

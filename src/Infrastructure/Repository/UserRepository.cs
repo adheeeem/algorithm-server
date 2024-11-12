@@ -13,8 +13,8 @@ public class UserRepository(IDbConnection connection, IUserEnrollmentRepository 
 
 	public async Task<bool> CheckIfUserExists(string username)
 	{
-		var query = $"select 1 from {UserTable} where username = @username";
-		int id = await connection.QuerySingleOrDefaultAsync<int>(query, new { username });
+		const string query = $"select 1 from {UserTable} where username = @username";
+		var id = await connection.QuerySingleOrDefaultAsync<int>(query, new { username });
 		return id == 1;
 	}
 
@@ -51,21 +51,21 @@ public class UserRepository(IDbConnection connection, IUserEnrollmentRepository 
 
 	public async Task<User> GetUserById(int id)
 	{
-		string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, is_active as isActive, dob as dateOfBirth, gender, role from {UserTable} where id=@id;";
+		const string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, is_active as isActive, dob as dateOfBirth, gender, role from {UserTable} where id=@id;";
 		var result = await connection.QueryFirstOrDefaultAsync<User>(query, new { id });
 		return result;
 	}
 
 	public async Task<User> GetUserByUsername(string username)
 	{
-		string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, dob, gender, role from {UserTable} where username=@username;";
+		const string query = $"select id, firstname, lastname, username, phone, grade, school_id as schoolId, total_score as totalScore, email, dob, gender, role from {UserTable} where username=@username;";
 		var result = await connection.QueryFirstOrDefaultAsync<User>(query, new { username });
 		return result;
 	}
 
 	public async Task<(string, string)> GetUserPasswordHashAndSalt(string username)
 	{
-		string query = $"select password_hash, salt from {UserTable} where username=@username;";
+		const string query = $"select password_hash, salt from {UserTable} where username=@username;";
 		var result = await connection.QueryFirstOrDefaultAsync<(string, string)>(query, new { username });
 		return result;
 	}
