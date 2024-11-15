@@ -17,10 +17,10 @@ public class UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
 
 		var userDto = new CreateUserDto();
 
-		byte[] salt = new byte[128 / 8];
+		var salt = new byte[128 / 8];
 		using var rng = RandomNumberGenerator.Create();
 		rng.GetBytes(salt);
-		string hashedPassword = ApplicationUtils.HashPassword(request.Password, salt);
+		var hashedPassword = ApplicationUtils.HashPassword(request.Password, salt);
 
 		userDto.DateOfBirth = request.DateOfBirth;
 		userDto.Firstname = request.Firstname;
@@ -34,7 +34,18 @@ public class UserService(IUnitOfWork unitOfWork, IConfiguration configuration)
 		userDto.PasswordHash = hashedPassword;
 		userDto.Salt = Convert.ToBase64String(salt);
 
-		return await unitOfWork.UserRepository.CreateUser(userDto);
+		try
+		{
+			var userId = await unitOfWork.UserRepository.CreateUser(userDto);
+			await unitOfWork.UserEnrollmentRepository.CreateUserEnrollment(userId, 1);
+			unitOfWork.Commit();
+			return userId;
+		}
+		catch (Exception ex)
+		{
+			unitOfWork.Rollback();
+			throw new BadRequestException(ex.Message);
+		}
 	}
 
 	public async Task<AuthenticationResponse> Login(LoginRequest request)

@@ -6,7 +6,7 @@ namespace Infrastructure;
 
 public class UnitOfWork : IUnitOfWork
 {
-    private IDbTransaction _transaction;
+    private IDbTransaction? _transaction;
     public IWeekRepository WeekRepository { get; }
     public IUserRepository UserRepository { get; set; }
     public ISchoolRepository SchoolRepository { get; }
@@ -40,18 +40,20 @@ public class UnitOfWork : IUnitOfWork
     {
         try
         {
-            _transaction.Commit();
-            _transaction.Connection?.Close();
+            _transaction?.Commit();
         }
         catch
         {
-            _transaction.Rollback();
+            _transaction?.Rollback();
             throw;
         }
         finally
         {
-            _transaction.Dispose();
-            _transaction.Connection?.Dispose();
+            if (_transaction != null)
+            {
+                _transaction.Dispose();
+                _transaction = null;   
+            }
         }
     }
 
@@ -59,13 +61,15 @@ public class UnitOfWork : IUnitOfWork
     {
         try
         {
-            _transaction.Rollback();
-            _transaction.Connection?.Close();
+            _transaction?.Rollback();
         }
         finally
         {
-            _transaction.Dispose();
-            _transaction.Connection?.Dispose();
+            if (_transaction != null)
+            {
+                _transaction.Dispose();
+                _transaction = null;   
+            }
         }
     }
 
