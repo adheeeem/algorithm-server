@@ -39,7 +39,27 @@ public class UserEnrollmentService(IUnitOfWork unitOfWork)
 			throw new RecordNotFoundException("user with this userid does not exist.");
 		if (!(await unitOfWork.UserEnrollmentRepository.CheckIfUserPaidForUnit(userId, unitNumber)))
 			throw new BadRequestException("make payment before enrolling to the unit");
-
-		await unitOfWork.UserEnrollmentRepository.EnrollUser(userId, unitNumber);
+		
+		var userInfo = await unitOfWork.UserRepository.GetUserById(userId);
+		
+		var weekId1 = await unitOfWork.WeekRepository.GetWeekId(unitNumber, 1, userInfo.Grade);
+		var weekId2 = await unitOfWork.WeekRepository.GetWeekId(unitNumber, 2, userInfo.Grade);
+		var weekId3 = await unitOfWork.WeekRepository.GetWeekId(unitNumber, 3, userInfo.Grade);
+		var weekId4 = await unitOfWork.WeekRepository.GetWeekId(unitNumber, 4, userInfo.Grade);
+		
+		try
+		{
+			await unitOfWork.UserEnrollmentRepository.EnrollUser(userId, unitNumber);
+			await unitOfWork.UserWeeklyActivityRepository.CreateWeeklyActivity(userId, weekId1);
+			await unitOfWork.UserWeeklyActivityRepository.CreateWeeklyActivity(userId, weekId2);
+			await unitOfWork.UserWeeklyActivityRepository.CreateWeeklyActivity(userId, weekId3);
+			await unitOfWork.UserWeeklyActivityRepository.CreateWeeklyActivity(userId, weekId4);
+			unitOfWork.Commit();
+		}
+		catch (Exception ex)
+		{
+			unitOfWork.Rollback();
+			throw new BadRequestException(ex.Message);
+		}
 	}
 }
