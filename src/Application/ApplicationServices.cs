@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Responses;
+using Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -12,5 +13,6 @@ public static class ApplicationServices
 		services.AddScoped<WeekService>();
 		services.AddScoped<UserService>();
 		services.AddScoped<UserEnrollmentService>();
+		services.AddScoped<WeeklyActivityService>();
 	}
 }

@@ -11,7 +11,7 @@ namespace WebAPI.Controllers
 	{
 		[Authorize(ApplicationPolicies.Student)]
 		[HttpGet]
-		[Route("enroll/{unitNumber}")]
+		[Route("enroll/{unitNumber:int}")]
 		public async Task<IActionResult> UserEnrollment(int unitNumber)
 		{
 			var id = Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
 
 		[Authorize(ApplicationPolicies.Student)]
 		[HttpPost]
-		[Route("enroll/{unitNumber}")]
+		[Route("enroll/{unitNumber:int}")]
 		public async Task<IActionResult> EnrollUser(int unitNumber)
 		{
 			var id = Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
