@@ -18,7 +18,7 @@ public class UserWeeklyActivityRepository(IDbConnection connection) : IUserWeekl
     public async Task<DateTimeOffset> GetWeeklyActivityStartedDateByUnitNumber(int userId, int unitNumber)
     {
         const string query =
-            $"select * from {AppUserWeeklyActivity} where unit_number = @unitNumber and app_user_id = @userId;";
+            $"select start_date from {AppUserWeeklyActivity} where unit_number = @unitNumber and app_user_id = @userId;";
         var dateTime = await connection.QueryFirstOrDefaultAsync<DateTimeOffset>(query, new { unitNumber, userId });
         return dateTime;
     }
