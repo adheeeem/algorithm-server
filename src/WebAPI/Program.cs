@@ -1,12 +1,11 @@
-using Infrastructure;
-using Application;
-using WebAPI.Exceptions;
-using Microsoft.OpenApi.Models;
-using Domain.Enums;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Application;
+using Infrastructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using WebAPI.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +20,11 @@ builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddSwaggerGen(c =>
 {
-	c.SwaggerDoc("v1", new OpenApiInfo());
+	c.SwaggerDoc("v1", new OpenApiInfo
+	{
+		Version = "v1",
+		Title = "Algorithm Server API",
+	});
 	c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 	{
 		Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
@@ -71,7 +74,6 @@ builder.Services.AddCors(options =>
 });
 builder.Logging.AddConfiguration(builder.Configuration).AddSentry();
 
-builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
@@ -131,7 +133,10 @@ var app = builder.Build();
 //{
 //}
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(options =>
+{
+	options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+});
 
 app.UseHttpsRedirection();
 app.UseCors("CORS_POLICY");
