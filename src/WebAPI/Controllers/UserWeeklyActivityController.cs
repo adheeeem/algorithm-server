@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers;
 
+[Route("api/[controller]")]
+[ApiController]
 public class UserWeeklyActivityController(WeeklyActivityService weeklyActivityService) : Controller
 {
     [Authorize(ApplicationPolicies.Student)]
-    [HttpGet("access/{unitNumber:int}")]
+    [HttpGet("{unitNumber:int}")]
     public async Task<IActionResult> GetUnitWeeksAccess(int unitNumber)
     {
         var id = Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
