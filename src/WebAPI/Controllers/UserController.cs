@@ -15,7 +15,7 @@ namespace WebAPI.Controllers
 		[Route("register")]
 		public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
 		{
-			int id = await userService.Register(request);
+			var id = await userService.Register(request);
 			return Ok(id);
 		}
 

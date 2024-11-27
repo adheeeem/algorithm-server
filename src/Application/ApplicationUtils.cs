@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Responses;
 
 namespace Application;
 
@@ -39,5 +40,37 @@ public static class ApplicationUtils
 		);
 
 		return new JwtSecurityTokenHandler().WriteToken(token);
+	}
+
+	public static UnitWeeksAccess CalculateWeeksAccess(DateTime unitStartDate)
+	{
+		var unitWeeksAccess = new UnitWeeksAccess
+		{
+			Week1 = true
+		};
+		
+		var today = DateTime.Today;
+		var daysDifference = today.Subtract(unitStartDate.Date).Days;
+
+		switch (daysDifference)
+		{
+			case <= 14 and > 6:
+				unitWeeksAccess.Week2 = true;
+				unitWeeksAccess.Week3 = false;
+				unitWeeksAccess.Week4 = false;
+				return unitWeeksAccess;
+			case <= 21 and > 14:
+				unitWeeksAccess.Week2 = true;
+				unitWeeksAccess.Week3 = true;
+				unitWeeksAccess.Week4 = false;
+				return unitWeeksAccess;
+			case > 21:
+				unitWeeksAccess.Week2 = true;
+				unitWeeksAccess.Week3 = true;
+				unitWeeksAccess.Week4 = true;
+				return unitWeeksAccess;
+			default:
+				return unitWeeksAccess;
+		}
 	}
 }

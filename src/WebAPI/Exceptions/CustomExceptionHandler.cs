@@ -21,18 +21,13 @@ public class CustomExceptionHandler : IExceptionFilter
 			Message = context.Exception.Message,
 			Details = context.Exception.ToString()
 		};
-		switch (context.Exception)
+		error.StatusCode = context.Exception switch
 		{
-			case RecordNotFoundException:
-				error.StatusCode = HttpStatusCode.NotFound;
-				break;
-			case RecordAlreadyExistsException:
-				error.StatusCode = HttpStatusCode.BadRequest;
-				break;
-			case BadRequestException:
-				error.StatusCode = HttpStatusCode.BadRequest;
-				break;
-		}
+			RecordNotFoundException => HttpStatusCode.NotFound,
+			RecordAlreadyExistsException => HttpStatusCode.BadRequest,
+			BadRequestException => HttpStatusCode.BadRequest,
+			_ => error.StatusCode
+		};
 		_logger.LogError(context.Exception, "An exception occurred: {Message}, Details: {Details}", error.Message, error.Details);
 
 		context.Result = new JsonResult(error);

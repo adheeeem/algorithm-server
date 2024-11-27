@@ -18,16 +18,19 @@ namespace WebAPI.Controllers
 			return Ok(questionId);
 		}
 
-		[Authorize(ApplicationPolicies.Editor)]
+		[Authorize(ApplicationPolicies.Student)]
 		[HttpGet]
-		public async Task<IActionResult> GetAllQuestions([FromQuery] int limit, [FromQuery] int page, [FromQuery] int weekNumber, [FromQuery] int unitNumber, [FromQuery] int grade)
+		public async Task<IActionResult> GetAllQuestions([FromQuery] int limit, [FromQuery] int page, [FromQuery] int weekNumber, [FromQuery] int unitNumber)
 		{
-			var result = await questionService.GetAllQuestions(limit, page, weekNumber, unitNumber, grade);
+			var id = Request.HttpContext.User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+			if (id == null)
+				return Unauthorized();
+			var result = await questionService.GetAllQuestions(limit, page, weekNumber, unitNumber, int.Parse(id));
 			return Ok(result);
 		}
 
 		[Authorize(ApplicationPolicies.Editor)]
-		[HttpDelete("{id}")]
+		[HttpDelete("{id:int}")]
 		public async Task<IActionResult> DeleteQuestion(int id)
 		{
 			await questionService.DeleteQuestion(id);
@@ -36,8 +39,8 @@ namespace WebAPI.Controllers
 
 		[Authorize(ApplicationPolicies.Editor)]
 		[HttpPost]
-		[Route("upload-image/{id}")]
-		public async Task<IActionResult> UploadProductImage(int id, IFormFile file)
+		[Route("upload-image/{id:int}")]
+		public async Task<IActionResult> UploadQuestionImage(int id, IFormFile file)
 		{
 			await questionService.UploadQuestionImage(file.OpenReadStream(), file.ContentType, id);
 			return Ok();

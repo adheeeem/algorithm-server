@@ -15,7 +15,7 @@ public class UserWeeklyActivityRepository(IDbConnection connection) : IUserWeekl
         await connection.ExecuteAsync(query, new { userId, weekId, isCompleted });
     }
 
-    public async Task<DateTimeOffset> GetWeeklyActivityStartedDateByUnitNumber(int userId, int unitNumber)
+    public async Task<DateTimeOffset> GetUserWeeklyActivityStartedDateByUnitNumber(int userId, int unitNumber)
     {
         const string query = """
                              select auwa.start_date from app_user_weekly_activity auwa 

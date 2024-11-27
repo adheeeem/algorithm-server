@@ -20,7 +20,7 @@ namespace WebAPI.Controllers
 			var response = await userEnrollmentService.GetUserEnrollmentResponse(int.Parse(id), unitNumber);
 			return Ok(response);
 		}
-
+		  
 		[Authorize(ApplicationPolicies.Student)]
 		[HttpPost]
 		[Route("enroll/{unitNumber:int}")]
