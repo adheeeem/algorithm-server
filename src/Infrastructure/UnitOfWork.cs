@@ -14,6 +14,7 @@ public class UnitOfWork : IUnitOfWork
     public IQuestionRepository QuestionRepository { get; }
     public IUserEnrollmentRepository UserEnrollmentRepository { get; }
     public IQuestionAttemptRepository QuestionAttemptRepository { get; }
+    public IAttemptResultRepository AttemptResultRepository { get; }
     private bool _disposed;
 
     public UnitOfWork(IDbConnection connection,
@@ -23,7 +24,8 @@ public class UnitOfWork : IUnitOfWork
         IUserWeeklyActivityRepository userWeeklyActivityRepository,
         IQuestionRepository questionRepository,
         IUserEnrollmentRepository userEnrollmentRepository,
-        IQuestionAttemptRepository questionAttemptRepository
+        IQuestionAttemptRepository questionAttemptRepository,
+        IAttemptResultRepository attemptResultRepository
     )
     {
         var connectionState = connection.State == ConnectionState.Closed;
@@ -37,6 +39,7 @@ public class UnitOfWork : IUnitOfWork
         QuestionRepository = questionRepository;
         UserEnrollmentRepository = userEnrollmentRepository;
         QuestionAttemptRepository = questionAttemptRepository;
+        AttemptResultRepository = attemptResultRepository;
     }
 
     public void Commit()

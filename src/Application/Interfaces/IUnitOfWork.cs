@@ -11,6 +11,7 @@ public interface IUnitOfWork : IDisposable
     IQuestionRepository QuestionRepository { get; } 
     IUserEnrollmentRepository UserEnrollmentRepository { get; }
     IQuestionAttemptRepository QuestionAttemptRepository { get; }
+    IAttemptResultRepository AttemptResultRepository { get; }
     void Commit();
     void Rollback();
 }

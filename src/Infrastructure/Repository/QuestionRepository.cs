@@ -21,12 +21,24 @@ public class QuestionRepository(IDbConnection connection) : IQuestionRepository
         return id;
     }
 
-    public async Task<(int, int)> GetUnitAndWeekNumberByQuestionId(int questionId)
+    public async Task<int> GetWeekIdByQuestionId(int questionId)
     {
         const string query =
-            $"select w.unit_number, w.number from {WeekTable} w inner join {QuestionTable} q on q.week_id = w.id where q.id = @questionId;";
-        var response = await connection.QuerySingleAsync<(int, int)>(query, new { questionId });
+            $"select week_id from {QuestionTable} where id = @questionId";
+        var response = await connection.QuerySingleAsync<int>(query, new { questionId });
         return response;
+    }
+
+    public async Task<List<UnitWeekQuestionWithAnswerDto>> GetUnitWeekQuestionsWithAnswers(int weekNumber,
+        int unitNumber)
+    {
+        const string query = $"""
+                              select q.id as questionId, q.answer_id as answerId 
+                              from {QuestionTable} q inner join {WeekTable} w on w.id = q.week_id
+                              where w.number = @weekNumber and w.unit_number = @unitNumber
+                              """;
+        var result = await connection.QueryAsync<UnitWeekQuestionWithAnswerDto>(query, new { weekNumber, unitNumber });
+        return result.ToList();
     }
 
     public async Task<bool> CheckIfQuestionExists(int questionId)

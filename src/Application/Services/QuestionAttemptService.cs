@@ -11,18 +11,20 @@ public class QuestionAttemptService(IUnitOfWork unitOfWork)
     {
         if (questionAttempts?.Count == 0 || questionAttempts == null)
             return;
-        var unitAndWeekNumber =
-            await unitOfWork.QuestionRepository.GetUnitAndWeekNumberByQuestionId(questionAttempts[0].QuestionId);
-        var paid = await unitOfWork.UserEnrollmentRepository.CheckIfUserPaidForUnit(userId, unitAndWeekNumber.Item1);
+        var weekId = await unitOfWork.QuestionRepository.GetWeekIdByQuestionId(questionAttempts[0].QuestionId);
+        var week = await unitOfWork.WeekRepository.GetWeekById(weekId);
+        var paid = await unitOfWork.UserEnrollmentRepository.CheckIfUserPaidForUnit(userId, week.UnitNumber);
         if (!paid)
             throw new BadRequestException("User with this unit number and grade does not exist.");
         var unitStartDate =
             await unitOfWork.UserWeeklyActivityRepository.GetUserWeeklyActivityStartedDateByUnitNumber(userId,
-                unitAndWeekNumber.Item1);
+                week.UnitNumber);
         var weeksAccess = ApplicationUtils.CalculateWeeksAccess(unitStartDate.Date);
-        ApplicationUtils.ThrowExceptionIfCannotAccessToWeek(weeksAccess, unitAndWeekNumber.Item2);
+        ApplicationUtils.ThrowExceptionIfCannotAccessToWeek(weeksAccess, week.Number);
         var groupId = Guid.NewGuid();
         var date = DateTime.Now;
+        var unitWeekQuestionAnswers =
+            await unitOfWork.QuestionRepository.GetUnitWeekQuestionsWithAnswers(week.Number, week.UnitNumber);
         var questionAttemptsDto = questionAttempts.Select(questionAttempt => new QuestionAttemptDto
             {
                 UserId = userId,
@@ -33,6 +35,19 @@ public class QuestionAttemptService(IUnitOfWork unitOfWork)
             })
             .ToList();
 
-        await unitOfWork.QuestionAttemptRepository.SubmitQuestionAttempt(questionAttemptsDto);
+        var correctAnswers = questionAttemptsDto.Count(questionAttempt =>
+            unitWeekQuestionAnswers.Any(q =>
+                q.QuestionId == questionAttempt.QuestionId && q.AnswerId == questionAttempt.SelectedOptionIndex));
+
+        try
+        {
+            await unitOfWork.QuestionAttemptRepository.SubmitQuestionAttempt(questionAttemptsDto);
+            await unitOfWork.AttemptResultRepository.AddAttemptResult(groupId, correctAnswers);
+            unitOfWork.Commit();
+        }
+        catch
+        {
+            unitOfWork.Rollback();
+        }
     }
 }
