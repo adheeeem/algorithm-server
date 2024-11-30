@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Exceptions;
 using Application.Responses;
 
 namespace Application;
@@ -40,6 +41,13 @@ public static class ApplicationUtils
 		);
 
 		return new JwtSecurityTokenHandler().WriteToken(token);
+	}
+
+	public static void ThrowExceptionIfCannotAccessToWeek(UnitWeeksAccess weekAccess, int weekNumber)
+	{
+		if ((weekNumber == 1 && !weekAccess.Week1) || (weekNumber == 2 && !weekAccess.Week2) ||
+		    (weekNumber == 3 && !weekAccess.Week3) || (weekNumber == 4 && !weekAccess.Week4))
+			throw new BadRequestException("You do not have an access to this week.");
 	}
 
 	public static UnitWeeksAccess CalculateWeeksAccess(DateTime unitStartDate)

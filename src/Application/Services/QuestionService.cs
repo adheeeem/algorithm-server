@@ -46,9 +46,7 @@ public class QuestionService(IUnitOfWork unitOfWork, IBlobService blobService)
             await unitOfWork.UserWeeklyActivityRepository.GetUserWeeklyActivityStartedDateByUnitNumber(userId,
                 unitNumber);
         var weekAccess = ApplicationUtils.CalculateWeeksAccess(startedDate.Date);
-        if ((weekNumber == 1 && !weekAccess.Week1) || (weekNumber == 2 && !weekAccess.Week2) ||
-            (weekNumber == 3 && !weekAccess.Week3) || (weekNumber == 4 && !weekAccess.Week4))
-            throw new BadRequestException("You do not have an access to this week.");
+        ApplicationUtils.ThrowExceptionIfCannotAccessToWeek(weekAccess, weekNumber);
         var user = await unitOfWork.UserRepository.GetUserById(userId);
         var questions =
             await unitOfWork.QuestionRepository.GetAllQuestions(limit, page, weekNumber, unitNumber, user.Grade);

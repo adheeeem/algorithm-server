@@ -8,7 +8,6 @@ namespace Infrastructure.Repository;
 public class UserEnrollmentRepository(IDbConnection connection) : IUserEnrollmentRepository
 {
 	private const string UserEnrollmentTable = "app_user_enrollment";
-	private const string AppUserWeeklyActivity = "app_user_weekly_activity";
 
 	public async Task<bool> CheckIfUserPaidForUnit(int userId, int unitNumber)
 	{

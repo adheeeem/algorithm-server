@@ -8,21 +8,23 @@ public class UnitOfWork : IUnitOfWork
 {
     private IDbTransaction? _transaction;
     public IWeekRepository WeekRepository { get; }
-    public IUserRepository UserRepository { get; set; }
+    public IUserRepository UserRepository { get; }
     public ISchoolRepository SchoolRepository { get; }
     public IUserWeeklyActivityRepository UserWeeklyActivityRepository { get; }
     public IQuestionRepository QuestionRepository { get; }
     public IUserEnrollmentRepository UserEnrollmentRepository { get; }
+    public IQuestionAttemptRepository QuestionAttemptRepository { get; }
     private bool _disposed;
-    
+
     public UnitOfWork(IDbConnection connection,
         IWeekRepository weekRepository,
         IUserRepository userRepository,
         ISchoolRepository schoolRepository,
         IUserWeeklyActivityRepository userWeeklyActivityRepository,
         IQuestionRepository questionRepository,
-        IUserEnrollmentRepository userEnrollmentRepository
-        )
+        IUserEnrollmentRepository userEnrollmentRepository,
+        IQuestionAttemptRepository questionAttemptRepository
+    )
     {
         var connectionState = connection.State == ConnectionState.Closed;
         if (connectionState)
@@ -34,8 +36,9 @@ public class UnitOfWork : IUnitOfWork
         UserWeeklyActivityRepository = userWeeklyActivityRepository;
         QuestionRepository = questionRepository;
         UserEnrollmentRepository = userEnrollmentRepository;
+        QuestionAttemptRepository = questionAttemptRepository;
     }
-    
+
     public void Commit()
     {
         try
@@ -52,7 +55,7 @@ public class UnitOfWork : IUnitOfWork
             if (_transaction != null)
             {
                 _transaction.Dispose();
-                _transaction = null;   
+                _transaction = null;
             }
         }
     }
@@ -68,27 +71,26 @@ public class UnitOfWork : IUnitOfWork
             if (_transaction != null)
             {
                 _transaction.Dispose();
-                _transaction = null;   
+                _transaction = null;
             }
         }
     }
 
     private void dispose(bool disposing)
     {
-        if (!_disposed)
+        if (_disposed) return;
+        if (disposing)
         {
-            if(disposing)
+            if (_transaction != null)
             {
-                if (_transaction != null)
-                {
-                    _transaction.Dispose();
-                    _transaction = null;
-                }
+                _transaction.Dispose();
+                _transaction = null;
             }
-            _disposed = true;
         }
+
+        _disposed = true;
     }
-    
+
     public void Dispose()
     {
         dispose(true);

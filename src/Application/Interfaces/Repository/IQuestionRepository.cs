@@ -10,4 +10,5 @@ public interface IQuestionRepository
 	Task DeleteQuestion(int id);
 	Task SetImageId(int questionId, Guid imageId);
 	Task<bool> CheckIfQuestionExists(int questionId);
+	Task<(int, int)> GetUnitAndWeekNumberByQuestionId(int questionId);
 }

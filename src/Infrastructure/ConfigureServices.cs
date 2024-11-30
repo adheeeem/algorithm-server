@@ -26,6 +26,7 @@ public static class ConfigureServices
 		services.AddScoped<IUserRepository, UserRepository>();
 		services.AddScoped<IUserEnrollmentRepository, UserEnrollmentRepository>();
 		services.AddScoped<IUserWeeklyActivityRepository, UserWeeklyActivityRepository>();
+		services.AddScoped<IQuestionAttemptRepository, QuestionAttemptRepository>();
 		services.AddScoped<IUnitOfWork, UnitOfWork>();
 	}
 }

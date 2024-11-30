@@ -10,6 +10,7 @@ public interface IUnitOfWork : IDisposable
     IUserWeeklyActivityRepository UserWeeklyActivityRepository { get; }
     IQuestionRepository QuestionRepository { get; } 
     IUserEnrollmentRepository UserEnrollmentRepository { get; }
+    IQuestionAttemptRepository QuestionAttemptRepository { get; }
     void Commit();
     void Rollback();
 }
