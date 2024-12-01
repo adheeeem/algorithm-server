@@ -41,6 +41,17 @@ public class QuestionRepository(IDbConnection connection) : IQuestionRepository
         return result.ToList();
     }
 
+    public async Task<int> GetWeekUnitQuestionCountByGrade(int weekNumber, int unitNumber, int grade)
+    {
+        const string query = $"""
+                              select count(*) 
+                              from {QuestionTable} q inner join {WeekTable} w on w.id = q.week_id
+                              where w.number = @weekNumber and w.unit_number = @unitNumber and w.grade = @grade
+                              """;
+        var result = await connection.ExecuteScalarAsync<int>(query, new { weekNumber, unitNumber, grade });
+        return result;
+    }
+
     public async Task<bool> CheckIfQuestionExists(int questionId)
     {
         const string query = $"select 1 from {QuestionTable} where id=@questionId";

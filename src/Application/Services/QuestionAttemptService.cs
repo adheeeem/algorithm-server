@@ -48,6 +48,7 @@ public class QuestionAttemptService(IUnitOfWork unitOfWork)
         catch
         {
             unitOfWork.Rollback();
+            throw;
         }
     }
 }

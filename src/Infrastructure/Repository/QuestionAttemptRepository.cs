@@ -23,7 +23,7 @@ public class QuestionAttemptRepository(IDbConnection connection) : IQuestionAtte
         {
             transaction.Commit();
         }
-        catch (Exception e)
+        catch
         {
             transaction.Rollback();
             throw;

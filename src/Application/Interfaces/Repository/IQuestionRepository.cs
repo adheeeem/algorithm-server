@@ -12,4 +12,5 @@ public interface IQuestionRepository
 	Task<bool> CheckIfQuestionExists(int questionId);
 	Task<int> GetWeekIdByQuestionId(int questionId);
 	Task<List<UnitWeekQuestionWithAnswerDto>> GetUnitWeekQuestionsWithAnswers(int weekNumber, int unitNumber);
+	Task<int> GetWeekUnitQuestionCountByGrade(int weekNumber, int unitNumber, int grade);
 }
