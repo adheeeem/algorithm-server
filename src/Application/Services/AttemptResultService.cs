@@ -6,9 +6,10 @@ namespace Application.Services;
 
 public class AttemptResultService(IUnitOfWork unitOfWork)
 {
-    public async Task<List<MinimalQuestionAttemptResultByWeekAndUnitNumberResponse>> GetUserWeekUnitAttemptResults(
-        int weekNumber,
-        int unitNumber, int userId)
+    public async Task<ListedResponse<MinimalQuestionAttemptResultByWeekAndUnitNumberResponse>>
+        GetUserWeekUnitAttemptResults(
+            int weekNumber,
+            int unitNumber, int userId)
     {
         var paid = await unitOfWork.UserEnrollmentRepository.CheckIfUserPaidForUnit(userId, unitNumber);
         if (!paid)
@@ -26,11 +27,17 @@ public class AttemptResultService(IUnitOfWork unitOfWork)
             await unitOfWork.AttemptResultRepository.GetMinimalQuestionAttemptResultsByWeekAndUnitNumber(weekNumber,
                 unitNumber, userId);
 
-        return results.Select(r => new MinimalQuestionAttemptResultByWeekAndUnitNumberResponse
+        var response = results.Select(r => new MinimalQuestionAttemptResultByWeekAndUnitNumberResponse
         {
             CorrectAnswers = r.CorrectAnswers,
             Date = r.Date,
             NumberOfQuestions = numberOfQuestions
         }).ToList();
+
+        return new ListedResponse<MinimalQuestionAttemptResultByWeekAndUnitNumberResponse>()
+        {
+            Items = response
+            // TODO calculate number of attempts
+        };
     }
 }
